@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: redevops-lab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: redevops
+      POSTGRES_PASSWORD: redevops
+      POSTGRES_DB: redevops_lab
+    ports:
+      - "5432:5432"
+    volumes:
+      - redevops_lab_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U redevops -d redevops_lab"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redevops_lab_postgres:

@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-devops-bg: #050a0f;
+  --color-devops-surface: #0b1220;
+  --color-devops-border: #1e293b;
+  --color-devops-green: #22c55e;
+  --color-devops-blue: #38bdf8;
+  --color-devops-violet: #8b5cf6;
+  --color-devops-amber: #f59e0b;
+  --color-devops-red: #ef4444;
+  --color-devops-text: #e5e7eb;
+  --color-devops-muted: #94a3b8;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 10, 15, 0.94) 0%, rgba(5, 10, 15, 1) 34%),
+    #050a0f;
+  color: #e5e7eb;
+}
+
+::selection {
+  background: rgba(34, 197, 94, 0.35);
+  color: #ffffff;
+}
+
+.tech-grid {
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.panel-edge {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 20px 80px rgba(0, 0, 0, 0.36);
+}
+
+.score-ring {
+  background:
+    radial-gradient(circle at center, #0b1220 0 57%, transparent 58%),
+    conic-gradient(#22c55e 0deg, #38bdf8 151deg, rgba(30, 41, 59, 0.95) 151deg 360deg);
+}

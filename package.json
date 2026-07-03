@@ -1,0 +1,34 @@
+{
+  "name": "redevops-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turn any GitHub repository into a DevOps learning lab.",
+  "license": "MIT",
+  "author": "Jandroel",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=11.9.0"
+  },
+  "scripts": {
+    "build:packages": "pnpm -r --filter @redevops-lab/shared --filter @redevops-lab/analyzer --filter @redevops-lab/scoring build",
+    "dev": "pnpm build:packages && pnpm -r --parallel --filter @redevops-lab/web --filter @redevops-lab/api dev",
+    "dev:web": "pnpm --filter @redevops-lab/web dev",
+    "dev:api": "pnpm build:packages && pnpm --filter @redevops-lab/api dev",
+    "build": "pnpm -r build",
+    "build:web": "pnpm --filter @redevops-lab/web build",
+    "build:api": "pnpm build:packages && pnpm --filter @redevops-lab/api build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "16.2.10",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
+    "prettier": "^3.6.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}

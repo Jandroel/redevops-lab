@@ -1,0 +1,49 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abstract DevOps dashboard">
+  <rect width="1600" height="900" fill="#050A0F"/>
+  <g opacity="0.55">
+    <path d="M0 84H1600M0 168H1600M0 252H1600M0 336H1600M0 420H1600M0 504H1600M0 588H1600M0 672H1600M0 756H1600M0 840H1600" stroke="#38BDF8" stroke-opacity="0.12"/>
+    <path d="M84 0V900M168 0V900M252 0V900M336 0V900M420 0V900M504 0V900M588 0V900M672 0V900M756 0V900M840 0V900M924 0V900M1008 0V900M1092 0V900M1176 0V900M1260 0V900M1344 0V900M1428 0V900M1512 0V900" stroke="#38BDF8" stroke-opacity="0.12"/>
+  </g>
+  <rect x="770" y="108" width="660" height="585" rx="14" fill="#0B1220" fill-opacity="0.9" stroke="#1E293B" stroke-width="2"/>
+  <rect x="806" y="148" width="270" height="180" rx="10" fill="#030712" stroke="#1E293B" stroke-width="2"/>
+  <circle cx="941" cy="238" r="64" stroke="#1E293B" stroke-width="18"/>
+  <path d="M941 174A64 64 0 1 1 886 270" stroke="#22C55E" stroke-width="18" stroke-linecap="round"/>
+  <path d="M941 174A64 64 0 0 1 1000 213" stroke="#38BDF8" stroke-width="18" stroke-linecap="round"/>
+  <rect x="1130" y="154" width="246" height="44" rx="8" fill="#22C55E" fill-opacity="0.13" stroke="#22C55E" stroke-opacity="0.45"/>
+  <rect x="1130" y="230" width="218" height="10" rx="5" fill="#38BDF8" fill-opacity="0.75"/>
+  <rect x="1130" y="278" width="180" height="10" rx="5" fill="#22C55E" fill-opacity="0.75"/>
+  <rect x="1130" y="326" width="205" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.72"/>
+  <rect x="1130" y="374" width="150" height="10" rx="5" fill="#F59E0B" fill-opacity="0.7"/>
+  <rect x="826" y="382" width="250" height="260" rx="10" fill="#030712" stroke="#1E293B" stroke-width="2"/>
+  <rect x="858" y="418" width="142" height="8" rx="4" fill="#94A3B8" fill-opacity="0.55"/>
+  <rect x="858" y="454" width="178" height="8" rx="4" fill="#38BDF8" fill-opacity="0.62"/>
+  <rect x="858" y="490" width="128" height="8" rx="4" fill="#22C55E" fill-opacity="0.62"/>
+  <rect x="858" y="526" width="160" height="8" rx="4" fill="#94A3B8" fill-opacity="0.55"/>
+  <rect x="858" y="562" width="190" height="8" rx="4" fill="#8B5CF6" fill-opacity="0.62"/>
+  <rect x="858" y="598" width="118" height="8" rx="4" fill="#94A3B8" fill-opacity="0.55"/>
+  <g stroke="#38BDF8" stroke-opacity="0.34" stroke-width="2">
+    <path d="M1174 428L1312 428L1242 524L1174 428Z"/>
+    <path d="M1242 524L1138 596H1372L1242 524Z"/>
+    <path d="M1312 428L1372 596"/>
+  </g>
+  <rect x="1142" y="405" width="64" height="46" rx="10" fill="#22C55E" fill-opacity="0.16" stroke="#22C55E" stroke-opacity="0.65"/>
+  <rect x="1280" y="405" width="64" height="46" rx="10" fill="#38BDF8" fill-opacity="0.16" stroke="#38BDF8" stroke-opacity="0.65"/>
+  <rect x="1210" y="501" width="64" height="46" rx="10" fill="#8B5CF6" fill-opacity="0.16" stroke="#8B5CF6" stroke-opacity="0.65"/>
+  <rect x="1106" y="573" width="64" height="46" rx="10" fill="#F59E0B" fill-opacity="0.14" stroke="#F59E0B" stroke-opacity="0.65"/>
+  <rect x="1340" y="573" width="64" height="46" rx="10" fill="#22C55E" fill-opacity="0.16" stroke="#22C55E" stroke-opacity="0.65"/>
+  <rect x="890" y="724" width="455" height="74" rx="10" fill="#030712" stroke="#1E293B" stroke-width="2"/>
+  <rect x="928" y="754" width="52" height="8" rx="4" fill="#22C55E" fill-opacity="0.76"/>
+  <rect x="1010" y="754" width="52" height="8" rx="4" fill="#38BDF8" fill-opacity="0.76"/>
+  <rect x="1092" y="754" width="52" height="8" rx="4" fill="#22C55E" fill-opacity="0.76"/>
+  <rect x="1174" y="754" width="52" height="8" rx="4" fill="#8B5CF6" fill-opacity="0.76"/>
+  <rect x="1256" y="754" width="52" height="8" rx="4" fill="#F59E0B" fill-opacity="0.76"/>
+  <path d="M230 760H1470" stroke="#22C55E" stroke-opacity="0.18"/>
+  <path d="M350 820L1320 150" stroke="#38BDF8" stroke-opacity="0.12"/>
+  <g opacity="0.8">
+    <circle cx="730" cy="168" r="3" fill="#22C55E"/>
+    <circle cx="1482" cy="244" r="3" fill="#38BDF8"/>
+    <circle cx="706" cy="584" r="3" fill="#8B5CF6"/>
+    <circle cx="1530" cy="672" r="3" fill="#22C55E"/>
+    <circle cx="1210" cy="86" r="3" fill="#F59E0B"/>
+  </g>
+</svg>
