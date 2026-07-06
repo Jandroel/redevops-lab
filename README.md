@@ -18,10 +18,7 @@ The project is in active development. The current implementation covers the foun
 - Markdown export with checklist, learning path, labs, and scoring evidence
 - Basic Spanish and English report content for educational sections
 - Next.js frontend with dark cloud-native UI
-- NestJS API foundation with `/api/health`
-- Backend contract endpoints for analyze and reports
-- Public GitHub repository analyzer using repository metadata and recursive tree data
-- Rule-based DevOps Maturity Score with explainable evidence
+- NestJS API with health, analyze, reports, and Markdown export endpoints
 - Swagger/OpenAPI documentation at `/api/docs`
 - Frontend analyzer form connected to the API
 
@@ -99,13 +96,13 @@ PORT=3001
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
-DATABASE_URL=postgresql://redevops:redevops@localhost:5432/redevops_lab
+DATABASE_URL=postgresql://user:password@localhost:5432/redevops_lab
 GITHUB_TOKEN=
 AI_PROVIDER=
 AI_API_KEY=
 ```
 
-`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. Do not commit real secrets.
+`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. Database and AI variables are placeholders for future phases. Do not commit real secrets.
 
 ## Project Status
 

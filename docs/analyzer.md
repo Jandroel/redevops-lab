@@ -11,7 +11,8 @@ Phase 3 introduces the first real analyzer for public GitHub repositories.
 5. Detect stack items from file names.
 6. Detect DevOps signals from file names and known paths.
 7. Generate initial findings from real detected signals.
-8. Return a `DevOpsReport` compatible with the frontend.
+8. Pass analyzer output to `packages/scoring` and `packages/learning`.
+9. Return a `DevOpsReport` compatible with the frontend.
 
 ## GitHub Endpoints
 
@@ -98,6 +99,7 @@ The analyzer processes up to 5000 relevant tree items. If the tree is truncated,
 - No private repository support.
 - No semantic package.json parsing yet.
 - Numeric scoring is handled by `packages/scoring` using analyzer output.
+- Checklist, learning path, and labs are handled by `packages/learning` using analyzer and scoring output.
 
 ## Manual Test Repositories
 

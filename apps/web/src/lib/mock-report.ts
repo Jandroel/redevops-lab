@@ -70,6 +70,24 @@ export const demoReport: DevOpsReport = {
         ]
       },
       {
+        key: "configuration",
+        name: "Configuration",
+        score: 9,
+        maxScore: 15,
+        percentage: 60,
+        summary: "Configuration readiness is developing based on environment examples and docs.",
+        rules: [
+          createRule("configuration.env_example", "configuration", "Environment example detected", 6, 6, [
+            ".env.example"
+          ]),
+          createRule("configuration.docs", "configuration", "Configuration documentation inferred", 3, 3, [
+            "README.md"
+          ]),
+          createRule("configuration.config_directory", "configuration", "Configuration directory detected", 0, 3, []),
+          createRule("configuration.environments", "configuration", "Environment separation inferred", 0, 3, [])
+        ]
+      },
+      {
         key: "security",
         name: "Security",
         score: 0,
@@ -91,6 +109,42 @@ export const demoReport: DevOpsReport = {
         rules: [
           createRule("observability.health", "observability", "Health check signal detected", 3, 3, [
             "apps/api/src/modules/health/health.controller.ts"
+          ])
+        ]
+      },
+      {
+        key: "documentation",
+        name: "Documentation",
+        score: 8,
+        maxScore: 10,
+        percentage: 80,
+        summary: "Documentation is strong based on README, docs, deployment, and license files.",
+        rules: [
+          createRule("documentation.readme", "documentation", "README detected", 3, 3, ["README.md"]),
+          createRule("documentation.docs", "documentation", "Docs directory detected", 2, 2, [
+            "docs/deployment.md"
+          ]),
+          createRule("documentation.deployment", "documentation", "Deployment documentation detected", 2, 2, [
+            "docs/deployment.md"
+          ]),
+          createRule("documentation.contributing", "documentation", "Contributing guide detected", 0, 1, []),
+          createRule("documentation.changelog", "documentation", "Changelog detected", 0, 1, []),
+          createRule("documentation.license", "documentation", "License detected", 1, 1, ["MIT"])
+        ]
+      },
+      {
+        key: "infrastructure",
+        name: "Infrastructure",
+        score: 1,
+        maxScore: 10,
+        percentage: 10,
+        summary: "Infrastructure readiness needs attention based on missing IaC and orchestration signals.",
+        rules: [
+          createRule("infrastructure.iac", "infrastructure", "Infrastructure as Code detected", 0, 4, []),
+          createRule("infrastructure.kubernetes", "infrastructure", "Kubernetes manifests detected", 0, 3, []),
+          createRule("infrastructure.helm", "infrastructure", "Helm chart detected", 0, 2, []),
+          createRule("infrastructure.deployment_config", "infrastructure", "Deployment or infra config detected", 1, 1, [
+            "docs/deployment.md"
           ])
         ]
       }
