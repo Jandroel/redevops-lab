@@ -60,7 +60,19 @@ GET https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
 
 `GITHUB_TOKEN` is optional and only increases rate limits. Private repositories are not supported in this phase.
 
-The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, initial findings, and a rule-based DevOps Maturity Score. Labs and learning path still use deterministic scaffolding until Phase 5.
+The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, initial findings, a rule-based DevOps Maturity Score, production-ready checklist, learning path, hands-on labs, and recommended next steps.
+
+Response highlights:
+
+```json
+{
+  "analysis": {},
+  "score": {},
+  "productionChecklist": [],
+  "learningPath": [],
+  "labs": []
+}
+```
 
 Expected error cases:
 
@@ -115,4 +127,4 @@ Errors use a consistent JSON shape:
 - No authentication.
 - No private repository analysis.
 - Score is rule-based, but it does not inspect deep file contents yet.
-- Lab generation is still scaffolded.
+- Checklist, learning path, lab, and next-step generation are rule-based and do not use AI yet.

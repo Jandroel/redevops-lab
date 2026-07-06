@@ -7,6 +7,7 @@ import { ExportMarkdownButton } from "@/components/report/export-markdown-button
 import { ImportantFiles } from "@/components/report/important-files";
 import { LabCard } from "@/components/report/lab-card";
 import { LearningPathTimeline } from "@/components/report/learning-path-timeline";
+import { ProductionChecklist } from "@/components/report/production-checklist";
 import { RepoOverviewCard } from "@/components/report/repo-overview-card";
 import { RepositorySignals } from "@/components/report/repository-signals";
 import { ScoreCard } from "@/components/report/score-card";
@@ -19,10 +20,6 @@ interface ReportDashboardProps {
   sourceLabel?: string;
 }
 
-function titleCase(value: string): string {
-  return value.slice(0, 1).toUpperCase() + value.slice(1);
-}
-
 export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDashboardProps) {
   const strengths = report.findings
     .filter((finding) => finding.type === "strength")
@@ -30,12 +27,17 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const gaps = report.findings
     .filter((finding) => finding.type === "missing" || finding.type === "risk")
     .map((finding) => finding.title);
+  const productionChecklist = report.productionChecklist ?? [];
   const terminalLines = [
     `report.id = ${report.id}`,
     `repository = ${report.repository.fullName}`,
     `default_branch = ${report.repository.defaultBranch ?? "unknown"}`,
     `score.total = ${report.score.total}`,
     `maturity = ${report.score.maturityLevel}`,
+    `level = ${report.input.level}`,
+    `language = ${report.input.language}`,
+    `checklist.items = ${productionChecklist.length}`,
+    `labs.generated = ${report.labs.length}`,
     `generated_at = ${report.generatedAt}`
   ];
   const signals = report.analysis?.devopsSignals ?? [];
@@ -59,7 +61,8 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
             </h1>
             <p className="mt-4 max-w-3xl leading-8 text-devops-muted">
               A structured report generated from repository metadata, file tree signals, and
-              deterministic DevOps rules. Score and labs remain mock-assisted until Phase 4.
+              deterministic DevOps rules. The checklist, learning path, and labs are generated
+              from the real analyzer evidence.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -111,15 +114,17 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           <ScoringEvidence categories={categories} />
         </div>
 
+        <div className="mt-6">
+          <ProductionChecklist items={productionChecklist} />
+        </div>
+
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <RepositorySignals signals={signals} />
           <ImportantFiles files={importantFiles} />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <LearningPathTimeline
-            steps={report.learningPath.map((step) => `${step.title}: ${step.description}`)}
-          />
+          <LearningPathTimeline steps={report.learningPath} />
           <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-white">Hands-on labs</h2>
@@ -127,13 +132,7 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
             </div>
             <div className="grid gap-4">
               {report.labs.map((lab) => (
-                <LabCard
-                  key={lab.id}
-                  title={lab.title}
-                  difficulty={titleCase(lab.difficulty)}
-                  objective={lab.objective}
-                  files={lab.suggestedFiles}
-                />
+                <LabCard key={lab.id} lab={lab} />
               ))}
             </div>
           </section>

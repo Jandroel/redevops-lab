@@ -1,31 +1,41 @@
-import type { DevOpsReport } from "@redevops-lab/shared";
+import type {
+  DevOpsLab,
+  DevOpsReport,
+  LearningPathStep,
+  ProductionChecklistItem,
+  ReportLanguage
+} from "@redevops-lab/shared";
 
 export function createReportMarkdown(report: DevOpsReport): string {
+  const language = report.input.language;
   const metadata = report.analysis?.repository ?? report.repository;
   const importantFiles = report.analysis?.importantFiles.length
     ? report.analysis.importantFiles.map((file) => `- ${file}`).join("\n")
-    : "- Not available in this report.";
+    : `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
   const signals = report.analysis?.devopsSignals.length
     ? report.analysis.devopsSignals
-        .map((signal) => `- ${signal.detected ? "Detected" : "Missing"}: ${signal.label} (${signal.category})`)
+        .map(
+          (signal) =>
+            `- ${signal.detected ? label(language, "Detectado", "Detected") : label(language, "Sin senal", "Missing")}: ${signal.label} (${signal.category})`
+        )
         .join("\n")
-    : "- Not available in this report.";
-  const categoryLines = report.score.categories.map(formatCategory).join("\n\n");
-  const strengths = report.score.strengths.map((item) => `- ${item}`).join("\n") || "- None detected yet.";
+    : `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
+  const categoryLines = report.score.categories.map((category) => formatCategory(category, language)).join("\n\n");
+  const strengths =
+    report.score.strengths.map((item) => `- ${item}`).join("\n") ||
+    `- ${label(language, "Aun no se detectaron.", "None detected yet.")}`;
   const weaknesses =
-    report.score.weaknesses.map((item) => `- ${item}`).join("\n") || "- None detected yet.";
+    report.score.weaknesses.map((item) => `- ${item}`).join("\n") ||
+    `- ${label(language, "Aun no se detectaron.", "None detected yet.")}`;
   const nextBestActions =
     report.score.nextBestActions.map((item, index) => `${index + 1}. ${item}`).join("\n") ||
-    "1. Keep improving DevOps evidence incrementally.";
+    `1. ${label(language, "Sigue mejorando la evidencia DevOps de forma incremental.", "Keep improving DevOps evidence incrementally.")}`;
   const findingLines = report.findings
     .map((finding) => `- **${finding.type}**: ${finding.title} - ${finding.description}`)
     .join("\n");
-  const pathLines = report.learningPath
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.description}`)
-    .join("\n");
-  const labLines = report.labs
-    .map((lab) => `- ${lab.title} (${lab.difficulty}): ${lab.objective}`)
-    .join("\n");
+  const checklistLines = formatProductionChecklist(report.productionChecklist, language);
+  const pathLines = formatLearningPath(report.learningPath, language);
+  const labLines = formatLabs(report.labs, language);
 
   return `# ReDevOps Lab Report
 
@@ -35,7 +45,7 @@ URL: ${report.repository.url}
 
 Generated at: ${report.generatedAt}
 
-## Repository Metadata
+## ${label(language, "Metadatos del repositorio", "Repository Metadata")}
 
 Stars: ${metadata.stars ?? "unknown"}
 
@@ -45,7 +55,7 @@ Default branch: ${metadata.defaultBranch ?? "unknown"}
 
 Last pushed: ${metadata.pushedAt ?? "unknown"}
 
-## Important Files
+## ${label(language, "Archivos importantes", "Important Files")}
 
 ${importantFiles}
 
@@ -61,7 +71,7 @@ Percentage: ${report.score.percentage}%
 
 Maturity: ${report.score.maturityLevel}
 
-## Category Breakdown
+## ${label(language, "Detalle por categoria", "Category Breakdown")}
 
 ${categoryLines}
 
@@ -73,13 +83,17 @@ ${strengths}
 
 ${weaknesses}
 
-## Next Best Actions
+## ${label(language, "Recommended Next Steps", "Recommended Next Steps")}
 
 ${nextBestActions}
 
 ## Findings
 
 ${findingLines}
+
+## Production-ready Checklist
+
+${checklistLines}
 
 ## Learning Path
 
@@ -91,27 +105,91 @@ ${labLines}
 `;
 }
 
-function formatCategory(category: DevOpsReport["score"]["categories"][number]): string {
+function formatCategory(category: DevOpsReport["score"]["categories"][number], language: ReportLanguage): string {
   const passed = category.rules
     .filter((rule) => rule.passed)
     .map((rule) => `- ${rule.title} (+${rule.points}/${rule.maxPoints})${formatEvidence(rule.evidence)}`)
     .join("\n");
   const missing = category.rules
     .filter((rule) => !rule.passed)
-    .map((rule) => `- ${rule.title} (+0/${rule.maxPoints}) - ${rule.recommendation ?? "No recommendation."}`)
+    .map((rule) => `- ${rule.title} (+0/${rule.maxPoints}) - ${rule.recommendation ?? label(language, "Sin recomendacion.", "No recommendation.")}`)
     .join("\n");
 
-  return `### ${category.name} — ${category.score}/${category.maxScore} (${category.percentage}%)
+  return `### ${category.name} - ${category.score}/${category.maxScore} (${category.percentage}%)
 
 ${category.summary}
 
-Passed:
+${label(language, "Detectado:", "Passed:")}
 ${passed || "- None"}
 
-Missing:
+${label(language, "Sin senal detectada:", "Missing:")}
 ${missing || "- None"}`;
 }
 
+function formatProductionChecklist(items: ProductionChecklistItem[], language: ReportLanguage): string {
+  if (!items.length) {
+    return `- ${label(language, "No hay checklist disponible.", "No checklist available.")}`;
+  }
+
+  return items
+    .map((item) => {
+      const marker = item.status === "done" ? "[x]" : "[ ]";
+
+      return `- ${marker} **${item.title}** (${item.category}, ${item.priority}, ${item.status}): ${item.description}${formatEvidence(item.evidence)}`;
+    })
+    .join("\n");
+}
+
+function formatLearningPath(steps: LearningPathStep[], language: ReportLanguage): string {
+  if (!steps.length) {
+    return `1. ${label(language, "No hay ruta disponible.", "No learning path available.")}`;
+  }
+
+  return steps
+    .map(
+      (step) => `${step.order}. **${step.title}** (${step.status ?? "recommended"}, ${step.difficulty ?? "beginner"})
+${step.description}
+${label(language, "Temas", "Topics")}: ${step.topics.join(", ")}
+${label(language, "Archivos relacionados", "Related files")}: ${step.relatedFiles.join(", ") || "n/a"}
+${label(language, "Labs", "Labs")}: ${step.labs.join(", ") || "n/a"}`
+    )
+    .join("\n\n");
+}
+
+function formatLabs(labs: DevOpsLab[], language: ReportLanguage): string {
+  if (!labs.length) {
+    return `- ${label(language, "No hay labs disponibles.", "No labs available.")}`;
+  }
+
+  return labs
+    .map(
+      (lab, index) => `### Lab ${index + 1}: ${lab.title}
+
+${label(language, "Dificultad", "Difficulty")}: ${lab.difficulty}
+
+${label(language, "Categoria", "Category")}: ${lab.category ?? "general"}
+
+${label(language, "Tiempo estimado", "Estimated time")}: ${lab.estimatedTime ?? "n/a"}
+
+${label(language, "Objetivo", "Objective")}: ${lab.objective}
+
+${label(language, "Por que importa", "Why it matters")}: ${lab.whyItMatters}
+
+${label(language, "Archivos sugeridos", "Suggested files")}:
+${lab.suggestedFiles.map((file) => `- ${file}`).join("\n")}
+
+${label(language, "Pasos", "Steps")}:
+${lab.steps.map((step, stepIndex) => `${stepIndex + 1}. ${step}`).join("\n")}
+
+${label(language, "Validacion", "Validation")}: ${lab.validation}`
+    )
+    .join("\n\n");
+}
+
 function formatEvidence(evidence: string[]): string {
-  return evidence.length ? ` — evidence: ${evidence.join(", ")}` : "";
+  return evidence.length ? ` - evidence: ${evidence.join(", ")}` : "";
+}
+
+function label(language: ReportLanguage, es: string, en: string): string {
+  return language === "es" ? es : en;
 }

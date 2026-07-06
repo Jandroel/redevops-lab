@@ -7,12 +7,13 @@ ReDevOps Lab is organized as a pnpm monorepo so the web app, API, and domain pac
 - `apps/web`: Next.js application that owns the product interface, marketing landing, analyze form, and visual reports.
 - `apps/api`: NestJS API that will expose health, analyze, and report endpoints.
 - `packages/shared`: Shared TypeScript contracts used by apps and domain packages.
-- `packages/analyzer`: Future GitHub repository analyzer. It will validate URLs, read repository trees, and detect stack and DevOps files.
+- `packages/analyzer`: GitHub repository analyzer. It validates URLs, reads repository trees, and detects stack and DevOps files.
 - `packages/scoring`: Rule-based scoring engine. It turns analyzer evidence into a DevOps maturity score, category breakdown, rule evidence, strengths, weaknesses, and next best actions.
+- `packages/learning`: Rule-based learning engine. It turns analysis and score gaps into a production-ready checklist, learning path, hands-on labs, and educational next steps.
 
 ## Data Flow
 
-Phase 3 routes the analyzer form from `apps/web` to `apps/api`. The backend validates the request, calls GitHub for public repository metadata and the recursive tree, runs deterministic detectors, and returns a typed `DevOpsReport`. Future phases will replace the mock score with rule-based scoring before any AI explanation layer is added.
+The analyzer form routes from `apps/web` to `apps/api`. The backend validates the request, calls GitHub for public repository metadata and the recursive tree, runs deterministic detectors, calculates a rule-based score, and generates educational guidance before returning a typed `DevOpsReport`.
 
 ```txt
 User GitHub URL
@@ -22,6 +23,7 @@ User GitHub URL
   -> GitHub REST API
   -> packages/analyzer
   -> packages/scoring
+  -> packages/learning
   -> report response
 ```
 
@@ -45,6 +47,18 @@ The API also configures Helmet, CORS, request validation, Swagger/OpenAPI, a glo
 - detecting stack signals by file names
 - detecting DevOps signals
 - generating initial findings
+
+## Learning Package
+
+`packages/learning` owns reusable logic for:
+
+- generating 10 to 18 production-readiness checklist items from signals and score rules
+- generating 5 to 8 learning path steps based on missing or recommended practices
+- generating 4 to 8 hands-on labs with objective, rationale, steps, validation, difficulty, estimated time, and suggested files
+- adapting educational copy to `level` (`beginner`, `intermediate`, `advanced`)
+- emitting basic Spanish or English content through `language` (`es`, `en`)
+
+The learning engine is deterministic. It does not use AI, read file contents deeply, clone repositories, write to repositories, create GitHub issues, or persist data.
 
 ## Deployment
 

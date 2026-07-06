@@ -11,7 +11,7 @@
     "pnpm": ">=11.9.0"
   },
   "scripts": {
-    "build:packages": "pnpm -r --filter @redevops-lab/shared --filter @redevops-lab/analyzer --filter @redevops-lab/scoring build",
+    "build:packages": "pnpm -r --filter @redevops-lab/shared --filter @redevops-lab/analyzer --filter @redevops-lab/scoring --filter @redevops-lab/learning build",
     "dev": "pnpm build:packages && pnpm -r --parallel --filter @redevops-lab/web --filter @redevops-lab/api dev",
     "dev:web": "pnpm --filter @redevops-lab/web dev",
     "dev:api": "pnpm build:packages && pnpm --filter @redevops-lab/api dev",

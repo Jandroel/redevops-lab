@@ -1,12 +1,19 @@
 import { parseGitHubUrl } from "@redevops-lab/analyzer";
+import {
+  generateHandsOnLabs,
+  generateLearningPath,
+  generateProductionChecklist,
+  generateRecommendedNextSteps
+} from "@redevops-lab/learning";
 import { calculateDevOpsScore } from "@redevops-lab/scoring";
 import type {
   DetectedStackItem,
   DevOpsFinding,
-  DevOpsLab,
   DevOpsReport,
+  DevOpsScoreSummary,
   DevOpsSignal,
   LearningPathStep,
+  ProductionChecklistItem,
   RepositoryAnalysis,
   RepositoryInput
 } from "@redevops-lab/shared";
@@ -142,92 +149,6 @@ const findings: DevOpsFinding[] = [
   }
 ];
 
-const labs: DevOpsLab[] = [
-  {
-    id: "lab-docker-compose",
-    title: "Add Docker Compose",
-    difficulty: "beginner",
-    objective: "Run future infrastructure dependencies locally with repeatable commands.",
-    suggestedFiles: ["docker-compose.yml", ".env.example"],
-    validation: "docker compose config validates and PostgreSQL starts locally.",
-    estimatedTime: "25 min"
-  },
-  {
-    id: "lab-github-actions-ci",
-    title: "Create GitHub Actions CI",
-    difficulty: "intermediate",
-    objective: "Validate install, lint, typecheck, and build on every pull request.",
-    suggestedFiles: [".github/workflows/ci.yml", "package.json"],
-    validation: "A pull request runs install, lint, typecheck, and build jobs successfully.",
-    estimatedTime: "35 min"
-  },
-  {
-    id: "lab-health-checks",
-    title: "Add Health Checks",
-    difficulty: "beginner",
-    objective: "Expose predictable health responses for uptime checks and deploy platforms.",
-    suggestedFiles: ["apps/api/src/modules/health"],
-    validation: "GET /api/health returns service, version, environment, and timestamp.",
-    estimatedTime: "20 min"
-  },
-  {
-    id: "lab-security-scanning",
-    title: "Add Security Scanning",
-    difficulty: "intermediate",
-    objective: "Detect vulnerable dependencies before changes reach production.",
-    suggestedFiles: [".github/workflows/security.yml"],
-    validation: "Security scan results are visible on pull requests.",
-    estimatedTime: "40 min"
-  },
-  {
-    id: "lab-deployment-docs",
-    title: "Document Deployment",
-    difficulty: "beginner",
-    objective: "Make Vercel and Railway deployment steps reproducible for contributors.",
-    suggestedFiles: ["docs/deployment.md", "README.md"],
-    validation: "A new contributor can deploy web and API by following the docs.",
-    estimatedTime: "30 min"
-  }
-];
-
-const learningPath: LearningPathStep[] = [
-  {
-    id: "path-env",
-    title: "Document runtime configuration",
-    description: "Clarify the environment variables required by web, API, and future services.",
-    topics: ["configuration", "secret hygiene"],
-    labs: ["lab-docker-compose"]
-  },
-  {
-    id: "path-ci",
-    title: "Automate verification",
-    description: "Create a CI workflow that catches regressions before merge.",
-    topics: ["ci", "quality gates"],
-    labs: ["lab-github-actions-ci"]
-  },
-  {
-    id: "path-operability",
-    title: "Add operational readiness signals",
-    description: "Expose health information and prepare the app for deploy platform checks.",
-    topics: ["health checks", "observability"],
-    labs: ["lab-health-checks"]
-  },
-  {
-    id: "path-security",
-    title: "Add security baseline",
-    description: "Introduce dependency scanning and document what risks remain.",
-    topics: ["supply chain", "dependency scanning"],
-    labs: ["lab-security-scanning"]
-  },
-  {
-    id: "path-deploy",
-    title: "Document deployment",
-    description: "Write the first deployment guide for Vercel, Railway, and future PostgreSQL.",
-    topics: ["deployment", "runbooks"],
-    labs: ["lab-deployment-docs"]
-  }
-];
-
 export const demoRepositoryInput: RepositoryInput = {
   url: "https://github.com/Jandroel/redevops-lab",
   level: "beginner",
@@ -284,6 +205,7 @@ export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
       truncated: false
     }
   };
+  const learning = createLearningSections(input, analysis);
 
   return {
     id,
@@ -292,11 +214,12 @@ export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
       ...input,
       url: repository.url
     },
-    score: calculateDevOpsScore(analysis),
+    score: learning.score,
     detectedStack,
     findings,
-    learningPath,
-    labs,
+    productionChecklist: learning.productionChecklist,
+    learningPath: learning.learningPath,
+    labs: learning.labs,
     analysis,
     generatedAt
   };
@@ -308,6 +231,7 @@ export function createAnalyzedDevOpsReport(
   analysisFindings: DevOpsFinding[]
 ): DevOpsReport {
   const id = `analysis-${analysis.repository.owner.toLowerCase()}-${analysis.repository.name.toLowerCase()}-${Date.now()}`;
+  const learning = createLearningSections(input, analysis);
 
   return {
     id,
@@ -316,11 +240,12 @@ export function createAnalyzedDevOpsReport(
       ...input,
       url: analysis.repository.url
     },
-    score: calculateDevOpsScore(analysis),
+    score: learning.score,
     detectedStack: analysis.detectedStack,
     findings: analysisFindings,
-    learningPath,
-    labs,
+    productionChecklist: learning.productionChecklist,
+    learningPath: learning.learningPath,
+    labs: learning.labs,
     analysis,
     generatedAt: analysis.generatedAt
   };
@@ -328,4 +253,54 @@ export function createAnalyzedDevOpsReport(
 
 export function createDemoReport(): DevOpsReport {
   return createMockDevOpsReport(demoRepositoryInput);
+}
+
+function createLearningSections(
+  input: RepositoryInput,
+  analysis: RepositoryAnalysis
+): {
+  score: DevOpsScoreSummary;
+  productionChecklist: ProductionChecklistItem[];
+  learningPath: LearningPathStep[];
+  labs: DevOpsReport["labs"];
+} {
+  const score = calculateDevOpsScore(analysis);
+  const productionChecklist = generateProductionChecklist({
+    analysis,
+    score,
+    level: input.level,
+    language: input.language
+  });
+  const learningPath = generateLearningPath({
+    analysis,
+    score,
+    checklist: productionChecklist,
+    level: input.level,
+    language: input.language
+  });
+  const labs = generateHandsOnLabs({
+    analysis,
+    score,
+    checklist: productionChecklist,
+    learningPath,
+    level: input.level,
+    language: input.language
+  });
+  const nextBestActions = generateRecommendedNextSteps({
+    score,
+    checklist: productionChecklist,
+    learningPath,
+    level: input.level,
+    language: input.language
+  });
+
+  return {
+    score: {
+      ...score,
+      nextBestActions
+    },
+    productionChecklist,
+    learningPath,
+    labs
+  };
 }

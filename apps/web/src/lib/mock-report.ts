@@ -1,108 +1,5 @@
 import type { DevOpsReport } from "@redevops-lab/shared";
 
-const fallbackScoreCategories: DevOpsReport["score"]["categories"] = [
-  {
-    key: "containerization",
-    name: "Containerization",
-    score: 5,
-    maxScore: 20,
-    percentage: 25,
-    summary: "Containerization needs attention, but Docker Compose is available for local services.",
-    rules: [
-      createRule("containerization.dockerfile", "containerization", "Dockerfile detected", 0, 8, []),
-      createRule("containerization.dockerignore", "containerization", ".dockerignore detected", 0, 5, []),
-      createRule("containerization.compose", "containerization", "Docker Compose detected", 5, 5, ["docker-compose.yml"]),
-      createRule("containerization.multiple", "containerization", "Multiple container artifacts detected", 0, 2, [])
-    ]
-  },
-  {
-    key: "ci_cd",
-    name: "CI/CD",
-    score: 17,
-    maxScore: 20,
-    percentage: 85,
-    summary: "CI/CD is strong based on workflow naming signals.",
-    rules: [
-      createRule("ci_cd.pipeline", "ci_cd", "CI/CD pipeline detected", 10, 10, [".github/workflows/ci.yml"]),
-      createRule("ci_cd.tests", "ci_cd", "Test workflow probable", 4, 4, [".github/workflows/ci.yml"]),
-      createRule("ci_cd.build", "ci_cd", "Build workflow probable", 3, 3, [".github/workflows/ci.yml"]),
-      createRule("ci_cd.deploy", "ci_cd", "Deploy or release workflow probable", 0, 3, [])
-    ]
-  },
-  {
-    key: "configuration",
-    name: "Configuration",
-    score: 9,
-    maxScore: 15,
-    percentage: 60,
-    summary: "Configuration readiness is developing based on environment examples and docs.",
-    rules: [
-      createRule("configuration.env_example", "configuration", "Environment example detected", 6, 6, [".env.example"]),
-      createRule("configuration.docs", "configuration", "Configuration documentation inferred", 3, 3, ["README.md"]),
-      createRule("configuration.config_directory", "configuration", "Configuration directory detected", 0, 3, []),
-      createRule("configuration.environments", "configuration", "Environment separation inferred", 0, 3, [])
-    ]
-  },
-  {
-    key: "security",
-    name: "Security",
-    score: 0,
-    maxScore: 15,
-    percentage: 0,
-    summary: "Security automation needs attention based on missing scanning and policy signals.",
-    rules: [
-      createRule("security.dependabot", "security", "Dependabot detected", 0, 5, []),
-      createRule("security.codeql", "security", "CodeQL detected", 0, 4, []),
-      createRule("security.scanning", "security", "Security scanner detected", 0, 3, []),
-      createRule("security.policy", "security", "Security policy detected", 0, 3, [])
-    ]
-  },
-  {
-    key: "observability",
-    name: "Observability",
-    score: 3,
-    maxScore: 10,
-    percentage: 30,
-    summary: "Observability needs attention based on health-only signals.",
-    rules: [
-      createRule("observability.health", "observability", "Health check signal detected", 3, 3, ["apps/api/src/modules/health/health.controller.ts"]),
-      createRule("observability.logging", "observability", "Logging signal detected", 0, 3, []),
-      createRule("observability.metrics", "observability", "Metrics or Prometheus detected", 0, 2, []),
-      createRule("observability.tracing", "observability", "Tracing or dashboard signal detected", 0, 2, [])
-    ]
-  },
-  {
-    key: "documentation",
-    name: "Documentation",
-    score: 8,
-    maxScore: 10,
-    percentage: 80,
-    summary: "Documentation is strong based on README, docs, deployment, and license files.",
-    rules: [
-      createRule("documentation.readme", "documentation", "README detected", 3, 3, ["README.md"]),
-      createRule("documentation.docs", "documentation", "Docs directory detected", 2, 2, ["docs/deployment.md"]),
-      createRule("documentation.deployment", "documentation", "Deployment documentation detected", 2, 2, ["docs/deployment.md"]),
-      createRule("documentation.contributing", "documentation", "Contributing guide detected", 0, 1, []),
-      createRule("documentation.changelog", "documentation", "Changelog detected", 0, 1, []),
-      createRule("documentation.license", "documentation", "License detected", 1, 1, ["MIT"])
-    ]
-  },
-  {
-    key: "infrastructure",
-    name: "Infrastructure",
-    score: 1,
-    maxScore: 10,
-    percentage: 10,
-    summary: "Infrastructure readiness needs attention based on missing IaC and orchestration signals.",
-    rules: [
-      createRule("infrastructure.iac", "infrastructure", "Infrastructure as Code detected", 0, 4, []),
-      createRule("infrastructure.kubernetes", "infrastructure", "Kubernetes manifests detected", 0, 3, []),
-      createRule("infrastructure.helm", "infrastructure", "Helm chart detected", 0, 2, []),
-      createRule("infrastructure.deployment_config", "infrastructure", "Deployment or infra config detected", 1, 1, ["docs/deployment.md"])
-    ]
-  }
-];
-
 function createRule(
   id: DevOpsReport["score"]["categories"][number]["rules"][number]["id"],
   category: DevOpsReport["score"]["categories"][number]["key"],
@@ -125,6 +22,8 @@ function createRule(
   };
 }
 
+const generatedAt = "2026-07-03T00:00:00.000Z";
+
 export const demoReport: DevOpsReport = {
   id: "demo-jandroel-redevops-lab",
   repository: {
@@ -145,29 +44,73 @@ export const demoReport: DevOpsReport = {
     maxScore: 100,
     percentage: 43,
     maturityLevel: "Foundation",
-    categories: fallbackScoreCategories,
-    strengths: [
-      "CI/CD pipeline detected (+10)",
-      "Environment example detected (+6)",
-      "README detected (+3)",
-      "Deployment documentation detected (+2)"
+    categories: [
+      {
+        key: "containerization",
+        name: "Containerization",
+        score: 5,
+        maxScore: 20,
+        percentage: 25,
+        summary: "Containerization needs attention based on Docker signals.",
+        rules: [
+          createRule("containerization.dockerfile", "containerization", "Dockerfile detected", 0, 8, []),
+          createRule("containerization.compose", "containerization", "Docker Compose detected", 5, 5, ["docker-compose.yml"])
+        ]
+      },
+      {
+        key: "ci_cd",
+        name: "CI/CD",
+        score: 17,
+        maxScore: 20,
+        percentage: 85,
+        summary: "CI/CD is strong based on workflow naming signals.",
+        rules: [
+          createRule("ci_cd.pipeline", "ci_cd", "CI/CD pipeline detected", 10, 10, [".github/workflows/ci.yml"]),
+          createRule("ci_cd.deploy", "ci_cd", "Deploy or release workflow probable", 0, 3, [])
+        ]
+      },
+      {
+        key: "security",
+        name: "Security",
+        score: 0,
+        maxScore: 15,
+        percentage: 0,
+        summary: "Security automation needs attention based on missing scanning signals.",
+        rules: [
+          createRule("security.dependabot", "security", "Dependabot detected", 0, 5, []),
+          createRule("security.scanning", "security", "Security scanner detected", 0, 3, [])
+        ]
+      },
+      {
+        key: "observability",
+        name: "Observability",
+        score: 3,
+        maxScore: 10,
+        percentage: 30,
+        summary: "Observability needs attention based on health-only signals.",
+        rules: [
+          createRule("observability.health", "observability", "Health check signal detected", 3, 3, [
+            "apps/api/src/modules/health/health.controller.ts"
+          ])
+        ]
+      }
     ],
+    strengths: ["CI/CD pipeline detected (+10)", "Environment example detected (+6)", "README detected (+3)"],
     weaknesses: [
       "Containerization is below 50% (5/20).",
       "Security is below 50% (0/15).",
       "Infrastructure is below 50% (1/10)."
     ],
     nextBestActions: [
-      "Add a Dockerfile or document the container image build strategy.",
-      "Add .github/dependabot.yml for dependency update automation.",
-      "Add structured logging guidance and runtime log conventions."
+      "Prioriza: Dockerfile detectado. Se detecto una ruta visible para construir una imagen de contenedor.",
+      "Prioriza: Security scanning detectado. Se detectaron senales de analisis de dependencias, codigo o secretos.",
+      "Siguiente lab recomendado: Conteneriza la aplicacion."
     ]
   },
   detectedStack: [
     { name: "Next.js", category: "frontend", confidence: 0.92 },
     { name: "NestJS", category: "backend", confidence: 0.9 },
     { name: "TypeScript", category: "language", confidence: 0.98 },
-    { name: "PostgreSQL", category: "database", confidence: 0.62 },
     { name: "Docker", category: "devops", confidence: 0.74 }
   ],
   findings: [
@@ -175,12 +118,6 @@ export const demoReport: DevOpsReport = {
       type: "strength",
       title: "Monorepo structure",
       description: "The repository separates web, API, and reusable packages into clear workspaces.",
-      severity: "low"
-    },
-    {
-      type: "strength",
-      title: "Basic API health endpoint",
-      description: "The backend exposes a health endpoint that deployment platforms can probe.",
       severity: "low"
     },
     {
@@ -194,102 +131,192 @@ export const demoReport: DevOpsReport = {
       title: "Security scanning",
       description: "Dependency and secret scanning should be added to CI before production use.",
       severity: "high"
+    }
+  ],
+  productionChecklist: [
+    {
+      id: "configuration.env_example",
+      title: "Existe .env.example",
+      description: "Se detecto una plantilla para variables de entorno o configuracion runtime.",
+      status: "done",
+      category: "configuration",
+      priority: "high",
+      evidence: [".env.example"]
     },
     {
-      type: "risk",
-      title: "Observability is thin",
-      description: "Health checks exist, but logs, metrics, and traces are not structured yet.",
-      severity: "medium"
+      id: "containerization.dockerfile",
+      title: "Dockerfile detectado",
+      description: "No se detecto una ruta visible para construir una imagen de contenedor.",
+      status: "missing",
+      category: "containerization",
+      priority: "high",
+      evidence: ["No se detecto una senal visible."]
     },
     {
-      type: "recommendation",
-      title: "Add security scanning and observability depth",
-      description: "The next valuable step is dependency scanning plus richer logs, metrics, or tracing.",
-      severity: "medium"
+      id: "ci_cd.pipeline",
+      title: "Pipeline CI detectado",
+      description: "Se detecto al menos una configuracion de CI/CD visible.",
+      status: "done",
+      category: "ci_cd",
+      priority: "high",
+      evidence: [".github/workflows/ci.yml"]
+    },
+    {
+      id: "security.scanning",
+      title: "Security scanning detectado",
+      description: "No se detectaron senales de analisis de dependencias, codigo o secretos.",
+      status: "missing",
+      category: "security",
+      priority: "high",
+      evidence: ["No se detecto una senal visible."]
+    },
+    {
+      id: "observability.logging_metrics",
+      title: "Logging o metricas detectadas",
+      description: "Health existe, pero no se detectaron senales claras de logs o metricas.",
+      status: "recommended",
+      category: "observability",
+      priority: "medium",
+      evidence: ["apps/api/src/modules/health/health.controller.ts"]
     }
   ],
   learningPath: [
     {
-      id: "path-env",
-      title: "Document runtime configuration",
-      description: "Clarify the environment variables required by web, API, and future services.",
-      topics: ["configuration", "secret hygiene"],
-      labs: ["lab-docker-compose"]
+      id: "path-runtime-configuration",
+      order: 1,
+      title: "Documenta la configuracion runtime",
+      description: "Aclara que variables y pasos necesita el proyecto para ejecutarse.",
+      topics: ["Configuracion", "environment variables", "secret hygiene"],
+      relatedFiles: [".env.example", "README.md"],
+      labs: ["lab-env-example"],
+      status: "completed",
+      difficulty: "beginner"
     },
     {
-      id: "path-ci",
-      title: "Automate verification",
-      description: "Create a CI workflow that catches regressions before merge.",
-      topics: ["ci", "quality gates"],
-      labs: ["lab-github-actions-ci"]
+      id: "path-containerize-application",
+      order: 2,
+      title: "Conteneriza la aplicacion",
+      description: "Agrega una ruta reproducible para empaquetar la aplicacion como imagen.",
+      topics: ["Contenedores", "Docker", "container image"],
+      relatedFiles: ["Dockerfile", ".dockerignore"],
+      labs: ["lab-dockerfile"],
+      status: "recommended",
+      difficulty: "beginner"
     },
     {
-      id: "path-operability",
-      title: "Add operational readiness signals",
-      description: "Expose health information and prepare the app for deploy platform checks.",
-      topics: ["health checks", "observability"],
-      labs: ["lab-health-checks"]
+      id: "path-security-baseline",
+      order: 3,
+      title: "Agrega seguridad basica de supply chain",
+      description: "Introduce senales visibles para actualizaciones, escaneo y politica de seguridad.",
+      topics: ["Seguridad", "supply chain", "dependency scanning"],
+      relatedFiles: [".github/dependabot.yml", ".github/workflows/security.yml"],
+      labs: ["lab-security-scanning"],
+      status: "recommended",
+      difficulty: "intermediate"
     },
     {
-      id: "path-security",
-      title: "Add security baseline",
-      description: "Introduce dependency scanning and document what risks remain.",
-      topics: ["supply chain", "dependency scanning"],
-      labs: ["lab-security-scanning"]
+      id: "path-operational-visibility",
+      order: 4,
+      title: "Agrega health checks y visibilidad operativa",
+      description: "Haz que el estado del servicio sea visible para despliegues y monitoreo inicial.",
+      topics: ["Observabilidad", "health checks", "logging"],
+      relatedFiles: ["apps/api/src/modules/health/health.controller.ts", "docs/observability.md"],
+      labs: ["lab-observability"],
+      status: "recommended",
+      difficulty: "intermediate"
     },
     {
-      id: "path-deploy",
-      title: "Document deployment",
-      description: "Write the first deployment guide for Vercel, Railway, and future PostgreSQL.",
-      topics: ["deployment", "runbooks"],
-      labs: ["lab-deployment-docs"]
+      id: "path-deployment-documentation",
+      order: 5,
+      title: "Documenta el proceso de despliegue",
+      description: "Explica como preparar, desplegar y verificar una version.",
+      topics: ["Documentacion", "runbooks"],
+      relatedFiles: ["docs/deployment.md", "README.md"],
+      labs: ["lab-deployment-docs"],
+      status: "recommended",
+      difficulty: "beginner"
     }
   ],
   labs: [
     {
-      id: "lab-docker-compose",
-      title: "Add Docker Compose",
+      id: "lab-env-example",
+      title: "Crea un archivo de entorno de ejemplo",
       difficulty: "beginner",
-      objective: "Run future infrastructure dependencies locally with repeatable commands.",
-      suggestedFiles: ["docker-compose.yml", ".env.example"],
-      validation: "docker compose config validates and PostgreSQL starts locally.",
-      estimatedTime: "25 min"
+      objective: "Documentar las variables necesarias para ejecutar el proyecto.",
+      whyItMatters: "Reduce friccion para nuevos contribuidores y evita compartir secretos reales.",
+      suggestedFiles: [".env.example", "README.md"],
+      steps: [
+        "Lista las variables que el proyecto espera en runtime.",
+        "Crea .env.example con nombres y valores falsos.",
+        "Verifica que ningun secreto real quede escrito."
+      ],
+      validation: "Un nuevo desarrollador puede configurar el proyecto usando README y .env.example.",
+      estimatedTime: "20-30 min",
+      category: "configuration"
     },
     {
-      id: "lab-github-actions-ci",
-      title: "Create GitHub Actions CI",
-      difficulty: "intermediate",
-      objective: "Validate install, lint, typecheck, and build on every pull request.",
-      suggestedFiles: [".github/workflows/ci.yml", "package.json"],
-      validation: "A pull request runs install, lint, typecheck, and build jobs successfully.",
-      estimatedTime: "35 min"
-    },
-    {
-      id: "lab-health-checks",
-      title: "Add Health Checks",
+      id: "lab-dockerfile",
+      title: "Conteneriza la aplicacion con Docker",
       difficulty: "beginner",
-      objective: "Expose predictable health responses for uptime checks and deploy platforms.",
-      suggestedFiles: ["apps/api/src/modules/health"],
-      validation: "GET /api/health returns service, version, environment, and timestamp.",
-      estimatedTime: "20 min"
+      objective: "Crear una ruta reproducible para construir una imagen de la aplicacion.",
+      whyItMatters: "Docker hace que desarrollo, CI y despliegue compartan una base mas consistente.",
+      suggestedFiles: ["Dockerfile (suggested)", ".dockerignore (suggested)", "package.json"],
+      steps: [
+        "Identifica el comando de build o arranque del stack detectado.",
+        "Crea un Dockerfile minimo para instalar dependencias y arrancar la app.",
+        "Agrega .dockerignore para excluir dependencias, builds locales y secretos."
+      ],
+      validation: "La imagen se puede construir localmente y la documentacion explica como ejecutarla.",
+      estimatedTime: "30-45 min",
+      category: "containerization"
     },
     {
       id: "lab-security-scanning",
-      title: "Add Security Scanning",
+      title: "Agrega escaneo de dependencias y codigo",
       difficulty: "intermediate",
-      objective: "Detect vulnerable dependencies before changes reach production.",
-      suggestedFiles: [".github/workflows/security.yml"],
-      validation: "Security scan results are visible on pull requests.",
-      estimatedTime: "40 min"
+      objective: "Detectar riesgos de dependencias, codigo o secretos antes del despliegue.",
+      whyItMatters: "El escaneo temprano reduce riesgo de supply chain y errores repetidos.",
+      suggestedFiles: [".github/dependabot.yml (suggested)", ".github/workflows/security.yml (suggested)"],
+      steps: [
+        "Agrega Dependabot para el ecosistema principal del repositorio.",
+        "Evalua CodeQL, Semgrep, Trivy o Gitleaks segun el stack.",
+        "Documenta como revisar hallazgos de seguridad."
+      ],
+      validation: "Los resultados de seguridad quedan visibles en pull requests o en la pestana Security.",
+      estimatedTime: "40-60 min",
+      category: "security"
+    },
+    {
+      id: "lab-observability",
+      title: "Agrega health check y logging basico",
+      difficulty: "intermediate",
+      objective: "Exponer una senal minima para saber si la aplicacion responde correctamente.",
+      whyItMatters: "Sin senales operativas, los fallos son mas dificiles de detectar y explicar.",
+      suggestedFiles: ["apps/api/src/modules/health", "docs/observability.md (suggested)"],
+      steps: [
+        "Define una respuesta /health o equivalente para el stack.",
+        "Agrega logging basico para arranque, errores y requests importantes.",
+        "Documenta que endpoint o comando debe revisar un monitor."
+      ],
+      validation: "Existe una senal verificable de salud y la documentacion explica como usarla.",
+      estimatedTime: "30-45 min",
+      category: "observability"
     },
     {
       id: "lab-deployment-docs",
-      title: "Document Deployment",
+      title: "Documenta el proceso de despliegue",
       difficulty: "beginner",
-      objective: "Make Vercel and Railway deployment steps reproducible for contributors.",
+      objective: "Hacer reproducible la preparacion, despliegue y verificacion de una version.",
+      whyItMatters: "Una guia clara evita conocimiento tribal y errores de handoff.",
       suggestedFiles: ["docs/deployment.md", "README.md"],
-      validation: "A new contributor can deploy web and API by following the docs.",
-      estimatedTime: "30 min"
+      steps: [
+        "Anota prerequisitos, variables y servicios externos.",
+        "Describe build, deploy y verificacion post-deploy.",
+        "Marca claramente los pasos pendientes o asumidos."
+      ],
+      validation: "Otra persona puede seguir la guia sin depender de explicaciones privadas.",
+      estimatedTime: "25-40 min",
+      category: "documentation"
     }
   ],
   analysis: {
@@ -305,9 +332,9 @@ export const demoReport: DevOpsReport = {
       openIssues: 0,
       license: "MIT",
       isPrivate: false,
-      pushedAt: "2026-07-03T00:00:00.000Z",
-      createdAt: "2026-07-03T00:00:00.000Z",
-      updatedAt: "2026-07-03T00:00:00.000Z"
+      pushedAt: generatedAt,
+      createdAt: generatedAt,
+      updatedAt: generatedAt
     },
     tree: [
       { path: ".env.example", type: "file", extension: ".example" },
@@ -374,58 +401,21 @@ export const demoReport: DevOpsReport = {
         confidence: 0,
         files: [],
         description: "No security scanning workflow is present yet."
-      },
-      {
-        key: "observability",
-        label: "Observability",
-        category: "observability",
-        detected: true,
-        confidence: 0.55,
-        files: ["apps/api/src/modules/health/health.controller.ts"],
-        description: "A health endpoint exists, but metrics and tracing are still future work."
-      },
-      {
-        key: "deployment_docs",
-        label: "Deployment documentation",
-        category: "documentation",
-        detected: true,
-        confidence: 0.82,
-        files: ["docs/deployment.md"],
-        description: "Deployment documentation exists for the current scaffold."
-      },
-      {
-        key: "readme",
-        label: "README",
-        category: "documentation",
-        detected: true,
-        confidence: 0.95,
-        files: ["README.md"],
-        description: "A README file exists."
-      },
-      {
-        key: "docs_directory",
-        label: "Documentation directory",
-        category: "documentation",
-        detected: true,
-        confidence: 0.75,
-        files: ["docs/deployment.md"],
-        description: "A docs directory exists."
       }
     ],
     detectedStack: [
       { name: "Next.js", category: "frontend", confidence: 0.92 },
       { name: "NestJS", category: "backend", confidence: 0.9 },
       { name: "TypeScript", category: "language", confidence: 0.98 },
-      { name: "PostgreSQL", category: "database", confidence: 0.62 },
       { name: "Docker", category: "devops", confidence: 0.74 }
     ],
-    generatedAt: "2026-07-03T00:00:00.000Z",
-    warnings: ["Demo report uses local mock analysis data."],
+    generatedAt,
+    warnings: ["Fallback report is bundled in the web app for offline demo rendering."],
     treeStats: {
       totalItems: 8,
       analyzedItems: 8,
       truncated: false
     }
   },
-  generatedAt: "2026-07-03T00:00:00.000Z"
+  generatedAt
 };

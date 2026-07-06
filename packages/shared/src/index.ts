@@ -34,6 +34,10 @@ export type DevOpsScoreCategoryKey =
   | "documentation"
   | "infrastructure";
 
+export type ProductionChecklistCategory = DevOpsScoreCategoryKey;
+
+export type ChecklistItemStatus = "done" | "missing" | "recommended";
+
 export type DevOpsMaturityLevel =
   | "Initial"
   | "Foundation"
@@ -140,22 +144,39 @@ export interface DevOpsFinding {
   severity?: FindingSeverity;
 }
 
+export interface ProductionChecklistItem {
+  id: string;
+  title: string;
+  description: string;
+  status: ChecklistItemStatus;
+  category: ProductionChecklistCategory;
+  priority: "low" | "medium" | "high";
+  evidence: string[];
+}
+
 export interface DevOpsLab {
   id: string;
   title: string;
   difficulty: ExperienceLevel;
   objective: string;
+  whyItMatters: string;
   suggestedFiles: string[];
+  steps: string[];
   validation: string;
   estimatedTime?: string;
+  category?: ProductionChecklistCategory;
 }
 
 export interface LearningPathStep {
   id: string;
+  order: number;
   title: string;
   description: string;
   topics: string[];
+  relatedFiles: string[];
   labs: string[];
+  status?: "completed" | "recommended" | "optional";
+  difficulty?: ExperienceLevel;
 }
 
 export interface DevOpsScoreSummary {
@@ -176,6 +197,7 @@ export interface DevOpsReport {
   score: DevOpsScoreSummary;
   detectedStack: DetectedStackItem[];
   findings: DevOpsFinding[];
+  productionChecklist: ProductionChecklistItem[];
   learningPath: LearningPathStep[];
   labs: DevOpsLab[];
   analysis?: RepositoryAnalysis;

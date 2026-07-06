@@ -15,7 +15,7 @@ export class AnalyzeController {
   @ApiResponse({
     status: 201,
     description:
-      "DevOps report generated from real public GitHub repository metadata, tree data, analyzer signals, and rule-based scoring."
+      "DevOps report generated from public GitHub metadata, tree data, analyzer signals, rule-based scoring, production checklist, learning path, and hands-on labs."
   })
   @ApiResponse({
     status: 400,

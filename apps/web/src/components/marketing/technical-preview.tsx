@@ -41,7 +41,7 @@ export function TechnicalPreview() {
           <div className="mt-8 grid grid-cols-3 gap-3">
             {[
               ["100", "Points"],
-              ["6", "Categories"],
+              ["7", "Categories"],
               ["5", "Labs"]
             ].map(([value, label]) => (
               <div key={label} className="rounded-lg border border-devops-border bg-devops-surface/70 p-4">

@@ -4,18 +4,19 @@
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
-The project is in active development. The current implementation covers the foundation through Phase 4: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, documentation, CI, and deployment-ready structure.
+The project is in active development. The current implementation covers the foundation through Phase 5: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, documentation, CI, and deployment-ready structure.
 
 ## Features
 
 - Rule-based DevOps maturity score
-- Production-ready checklist
+- Rule-based production-ready checklist
 - Public GitHub repository analyzer
 - Basic stack detection from repository files
 - DevOps signal detection for Docker, CI/CD, security, docs, observability, and infrastructure
-- Personalized learning path concept
-- Hands-on lab cards
-- Markdown export
+- Personalized learning path generated from score gaps and repository signals
+- Hands-on lab cards with objectives, steps, validation, difficulty, estimated time, and suggested files
+- Markdown export with checklist, learning path, labs, and scoring evidence
+- Basic Spanish and English report content for educational sections
 - Next.js frontend with dark cloud-native UI
 - NestJS API foundation with `/api/health`
 - Backend contract endpoints for analyze and reports
@@ -29,7 +30,7 @@ The project is in active development. The current implementation covers the foun
 - Monorepo: pnpm workspaces
 - Frontend: Next.js, React, TypeScript, Tailwind CSS
 - Backend: NestJS, TypeScript
-- Internal packages: shared contracts, analyzer, scoring
+- Internal packages: shared contracts, analyzer, scoring, learning
 - Future database: PostgreSQL
 - Future ORM: Prisma
 - Deployment target: Vercel for `apps/web`, Railway for `apps/api`
@@ -45,7 +46,8 @@ redevops-lab/
     shared/     # Shared TypeScript contracts
     analyzer/   # GitHub repository analyzer
     scoring/    # Rule-based DevOps scoring engine
-  docs/         # Architecture, API, analyzer, scoring, roadmap, deployment
+    learning/   # Rule-based checklist, learning path, labs, and next steps
+  docs/         # Architecture, API, analyzer, scoring, learning, roadmap, deployment
   examples/     # Example reports
 ```
 
@@ -71,7 +73,7 @@ pnpm dev:api      # Run only the NestJS API
 pnpm lint         # Lint all workspaces
 pnpm typecheck    # Typecheck all workspaces
 pnpm build        # Build all workspaces
-pnpm build:packages # Build shared, analyzer, and scoring packages
+pnpm build:packages # Build shared, analyzer, scoring, and learning packages
 pnpm format       # Format the repository
 ```
 
@@ -86,7 +88,7 @@ GET  /api/reports/:id/export
 GET  /api/docs
 ```
 
-`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, and a rule-based DevOps Maturity Score.
+`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, learning path, hands-on labs, and recommended next steps.
 
 ## Environment
 
@@ -115,7 +117,7 @@ ReDevOps Lab is under active development and ready for its first public reposito
 2. Backend contracts and API modules
 3. GitHub repository analyzer
 4. Rule-based DevOps scoring engine
-5. Learning path and hands-on labs
+5. Rule-based learning path, hands-on labs, production checklist, and bilingual educational output
 6. AI-assisted explanations grounded in analyzer output
 7. Full report page
 8. Markdown export
@@ -134,7 +136,7 @@ ReDevOps Lab is under active development and ready for its first public reposito
 - No AI integration yet
 - No private repository analysis yet
 - Score is deterministic and rule-based, but still limited to repository structure and file-name evidence
-- Learning path and lab generation are still scaffolded
+- Learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
 
 ## Author
 

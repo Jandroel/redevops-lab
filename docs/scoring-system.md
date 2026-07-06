@@ -126,6 +126,8 @@ The API also returns:
 
 These are derived from rule results and category percentages, not from AI.
 
+In Phase 5, `packages/learning` also uses score categories, rule evidence, failed rules, detected stack, and repository signals to generate the production-ready checklist, learning path, hands-on labs, and educational next steps.
+
 ## Current Limitations
 
 - The score is based mainly on structure, filenames, and known paths.
@@ -138,4 +140,4 @@ These are derived from rule results and category percentages, not from AI.
 
 ## Future Improvements
 
-Phase 5 will use score results to generate better learning paths and labs. Later phases can add content-aware analysis, richer package detection, historical trends, and AI explanations grounded in the deterministic score.
+Later phases can add content-aware analysis, richer package detection, historical trends, and AI explanations grounded in the deterministic score.

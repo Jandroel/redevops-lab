@@ -37,8 +37,10 @@
 ## Phase 5 - Learning Path and Labs
 
 - Production-readiness checklist
-- Practical labs by difficulty
-- Spanish and English output
+- Learning path based on real signals, findings, score gaps, stack, level, and language
+- Practical hands-on labs by difficulty, category, suggested files, steps, validation, and estimated time
+- Basic Spanish and English output for checklist, path, labs, and next steps
+- Markdown export and frontend report sections updated for educational output
 
 ## Phase 6 - AI Integration
 
@@ -59,6 +61,7 @@
 
 - Generate `redevops-report.md`
 - Include diagnosis, score, path, labs, and next steps
+- Current export already includes score, checklist, learning path, and labs; later phases can polish persisted report export.
 
 ## Phase 9 - Persistence
 

@@ -27,7 +27,7 @@ const rules: StackRule[] = [
   { name: "PHP", category: "language", confidence: 0.85, match: has("composer.json") },
   { name: "Laravel", category: "backend", confidence: 0.8, match: has("artisan") },
   { name: "Docker", category: "devops", confidence: 0.9, match: (paths) => [...paths].some((path) => path.endsWith("dockerfile") || path.endsWith(".dockerfile")) },
-  { name: "GitHub Actions", category: "devops", confidence: 0.9, match: (paths) => [...paths].some((path) => /^\\.github\\/workflows\\/.+\\.ya?ml$/i.test(path)) },
+  { name: "GitHub Actions", category: "devops", confidence: 0.9, match: (paths) => [...paths].some((path) => /^\.github\/workflows\/.+\.ya?ml$/i.test(path)) },
   { name: "Terraform", category: "devops", confidence: 0.88, match: (paths) => [...paths].some((path) => path.startsWith("terraform/") || path.endsWith(".tf")) },
   { name: "Kubernetes", category: "devops", confidence: 0.82, match: (paths) => [...paths].some((path) => path.startsWith("k8s/") || path.startsWith("kubernetes/")) },
   { name: "Helm", category: "devops", confidence: 0.84, match: (paths) => [...paths].some((path) => path.startsWith("helm/") || path.endsWith("chart.yaml")) },

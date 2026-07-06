@@ -53,6 +53,9 @@ importers:
       '@redevops-lab/analyzer':
         specifier: workspace:*
         version: link:../../packages/analyzer
+      '@redevops-lab/learning':
+        specifier: workspace:*
+        version: link:../../packages/learning
       '@redevops-lab/scoring':
         specifier: workspace:*
         version: link:../../packages/scoring
@@ -129,6 +132,16 @@ importers:
         version: 6.0.3
 
   packages/analyzer:
+    dependencies:
+      '@redevops-lab/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/learning:
     dependencies:
       '@redevops-lab/shared':
         specifier: workspace:*
