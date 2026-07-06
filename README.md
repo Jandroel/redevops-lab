@@ -4,7 +4,7 @@
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
-The project is in active development. The current implementation covers the foundation through Phase 5: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, documentation, CI, and deployment-ready structure.
+The project is in active development. The current implementation covers the foundation through Phase 6: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, documentation, CI, and deployment-ready structure.
 
 ## Features
 
@@ -15,6 +15,7 @@ The project is in active development. The current implementation covers the foun
 - DevOps signal detection for Docker, CI/CD, security, docs, observability, and infrastructure
 - Personalized learning path generated from score gaps and repository signals
 - Hands-on lab cards with objectives, steps, validation, difficulty, estimated time, and suggested files
+- Optional DevOps AI Mentor layer with mock and OpenAI-compatible providers
 - Markdown export with checklist, learning path, labs, and scoring evidence
 - Basic Spanish and English report content for educational sections
 - Next.js frontend with dark cloud-native UI
@@ -98,15 +99,21 @@ CORS_ORIGIN=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 DATABASE_URL=postgresql://user:password@localhost:5432/redevops_lab
 GITHUB_TOKEN=
-AI_PROVIDER=
+# AI - optional
+AI_ENABLED=false
+AI_PROVIDER=mock
+AI_MODEL=
 AI_API_KEY=
+AI_BASE_URL=
+AI_TEMPERATURE=0.3
+AI_TIMEOUT_MS=20000
 ```
 
-`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. Database and AI variables are placeholders for future phases. Do not commit real secrets.
+`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. AI is disabled by default and runs only in the backend. Do not commit real secrets.
 
 ## Project Status
 
-ReDevOps Lab is under active development and ready for its first public repository commit. Current capabilities are deterministic and evidence-based, but still limited to public repositories and file/tree signals.
+ReDevOps Lab is under active development and ready for its first public repository commit. Core analysis, scoring, checklist, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, learning path, or labs.
 
 ## Roadmap
 
@@ -115,7 +122,7 @@ ReDevOps Lab is under active development and ready for its first public reposito
 3. GitHub repository analyzer
 4. Rule-based DevOps scoring engine
 5. Rule-based learning path, hands-on labs, production checklist, and bilingual educational output
-6. AI-assisted explanations grounded in analyzer output
+6. Optional AI mentor explanations grounded in analyzer output
 7. Full report page
 8. Markdown export
 9. PostgreSQL persistence
@@ -130,7 +137,7 @@ ReDevOps Lab is under active development and ready for its first public reposito
 ## Current Mock Boundaries
 
 - No database or Prisma connection yet
-- No AI integration yet
+- AI mentor is optional, disabled by default, and does not replace deterministic analysis
 - No private repository analysis yet
 - Score is deterministic and rule-based, but still limited to repository structure and file-name evidence
 - Learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet

@@ -44,9 +44,11 @@
 
 ## Phase 6 - AI Integration
 
-- Explain and personalize analyzer results
+- Optional DevOps AI Mentor layer
+- Mock provider by default, with OpenAI-compatible provider support
+- Explain and personalize analyzer results without changing score or facts
 - Ground all AI output in real detected findings
-- Avoid invented files or practices
+- Avoid invented files, tools, workflows, vulnerabilities, or practices
 
 ## Phase 7 - Complete Report Page
 

@@ -11,7 +11,7 @@ export class ReportsController {
   @Get("demo")
   @ApiOperation({ summary: "Return the built-in demo DevOps report." })
   @ApiResponse({ status: 200, description: "Demo report returned." })
-  getDemoReport(): DevOpsReport {
+  getDemoReport(): Promise<DevOpsReport> {
     return this.reportsService.getDemoReport();
   }
 
@@ -20,7 +20,7 @@ export class ReportsController {
   @ApiParam({ name: "id", example: "demo-jandroel-redevops-lab" })
   @ApiResponse({ status: 200, description: "Report returned." })
   @ApiResponse({ status: 404, description: "Report not found." })
-  getReportById(@Param("id") id: string): DevOpsReport {
+  getReportById(@Param("id") id: string): Promise<DevOpsReport> {
     return this.reportsService.getReportById(id);
   }
 
@@ -32,7 +32,7 @@ export class ReportsController {
   @ApiProduces("text/markdown")
   @ApiResponse({ status: 200, description: "Markdown report returned." })
   @ApiResponse({ status: 404, description: "Report not found." })
-  exportReport(@Param("id") id: string): string {
+  exportReport(@Param("id") id: string): Promise<string> {
     return this.reportsService.exportReport(id);
   }
 }

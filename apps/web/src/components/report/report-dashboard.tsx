@@ -1,4 +1,5 @@
 import type { DevOpsCategoryScore, DevOpsReport } from "@redevops-lab/shared";
+import { AiMentorPanel } from "@/components/report/ai-mentor-panel";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { CategoryScoreBars } from "@/components/report/category-score-bars";
@@ -28,6 +29,8 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
     .filter((finding) => finding.type === "missing" || finding.type === "risk")
     .map((finding) => finding.title);
   const productionChecklist = report.productionChecklist ?? [];
+  const learningPath = report.learningPath ?? [];
+  const labs = report.labs ?? [];
   const terminalLines = [
     `report.id = ${report.id}`,
     `repository = ${report.repository.fullName}`,
@@ -37,7 +40,9 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
     `level = ${report.input.level}`,
     `language = ${report.input.language}`,
     `checklist.items = ${productionChecklist.length}`,
-    `labs.generated = ${report.labs.length}`,
+    `labs.generated = ${labs.length}`,
+    `ai.provider = ${report.ai?.provider ?? "mock"}`,
+    `ai.enabled = ${report.ai?.enabled ?? false}`,
     `generated_at = ${report.generatedAt}`
   ];
   const signals = report.analysis?.devopsSignals ?? [];
@@ -105,6 +110,10 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           />
         </div>
 
+        <div className="mt-6">
+          <AiMentorPanel ai={report.ai} />
+        </div>
+
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <ChecklistSection title="Detected strengths" items={strengths} tone="present" />
           <ChecklistSection title="Risks and missing practices" items={gaps} tone="missing" />
@@ -124,14 +133,14 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <LearningPathTimeline steps={report.learningPath} />
+          <LearningPathTimeline steps={learningPath} />
           <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-white">Hands-on labs</h2>
-              <Badge tone="violet">{report.labs.length} labs</Badge>
+              <Badge tone="violet">{labs.length} labs</Badge>
             </div>
             <div className="grid gap-4">
-              {report.labs.map((lab) => (
+              {labs.map((lab) => (
                 <LabCard key={lab.id} lab={lab} />
               ))}
             </div>

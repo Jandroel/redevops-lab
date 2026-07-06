@@ -373,6 +373,40 @@ export const demoReport: DevOpsReport = {
       category: "documentation"
     }
   ],
+  ai: {
+    enabled: false,
+    provider: "mock",
+    mode: "learning",
+    generatedAt,
+    mentorSummary:
+      "AI mentor is disabled. This fallback report was generated using deterministic repository analysis.",
+    scoreInterpretation:
+      "The score should be read as educational guidance based on visible repository signals, not as a formal audit.",
+    recommendedFocus: "Focus first on Dockerfile, security scanning, and operational visibility.",
+    riskExplanation:
+      "The most visible risks are missing production containerization, security scanning, and deeper observability signals.",
+    mentorNotes: [
+      "Repository facts come from analyzer, scoring, and learning engines.",
+      "Missing evidence means no signal was detected, not absolute proof that the practice does not exist."
+    ],
+    portfolioAdvice: [
+      "Turn one lab into a small pull request with before/after notes.",
+      "Show the checklist as evidence of practical DevOps learning."
+    ],
+    interviewTalkingPoints: [
+      "Explain how deterministic repository signals become score categories.",
+      "Describe why CI, Docker, security scanning, and observability are prioritized."
+    ],
+    improvedNextSteps: [
+      "Add a Dockerfile or document the image build strategy.",
+      "Add dependency or code scanning.",
+      "Document observability expectations."
+    ],
+    learningAdvice: [
+      "Practice containerization first, then CI and security scanning.",
+      "Keep improvements small and verifiable."
+    ]
+  },
   analysis: {
     repository: {
       provider: "github",

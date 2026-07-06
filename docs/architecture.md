@@ -33,6 +33,7 @@ User GitHub URL
 - `AnalyzeModule`: validates repository input and returns a report based on real public GitHub tree data.
 - `GitHubModule`: reads optional `GITHUB_TOKEN` and delegates public repository analysis.
 - `ReportsModule`: serves demo reports, report lookup, and Markdown export.
+- `AiModule`: optional mentor layer that enriches reports without changing deterministic analysis output.
 - `ConfigModule`: reads environment configuration for local and deployed environments.
 
 The API also configures Helmet, CORS, request validation, Swagger/OpenAPI, a global error filter, and a basic rate limit.
@@ -59,6 +60,26 @@ The API also configures Helmet, CORS, request validation, Swagger/OpenAPI, a glo
 - emitting basic Spanish or English content through `language` (`es`, `en`)
 
 The learning engine is deterministic. It does not use AI, read file contents deeply, clone repositories, write to repositories, create GitHub issues, or persist data.
+
+## AI Mentor Module
+
+`apps/api/src/modules/ai` owns the optional AI mentor layer.
+
+The API flow is:
+
+```txt
+AnalyzeService
+  -> analyzer
+  -> scoring
+  -> learning
+  -> AiService
+  -> selected provider
+  -> report.ai
+```
+
+`AiService` selects a provider from environment configuration. `MockAiProvider` is the safe fallback and default path. `OpenAICompatibleProvider` uses backend-only `fetch` calls against Chat Completions-compatible providers when `AI_ENABLED=true` and the provider is configured.
+
+The AI layer may explain, summarize, and prioritize. It must not change `analysis`, `score`, `findings`, `productionChecklist`, `learningPath`, or `labs`.
 
 ## Deployment
 

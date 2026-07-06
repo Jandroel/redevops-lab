@@ -38,6 +38,10 @@ export type ProductionChecklistCategory = DevOpsScoreCategoryKey;
 
 export type ChecklistItemStatus = "done" | "missing" | "recommended";
 
+export type AiProviderName = "mock" | "openai" | "deepseek" | "openrouter" | "groq" | "custom";
+
+export type AiMentorMode = "learning" | "interview" | "production" | "portfolio" | "open-source";
+
 export type DevOpsMaturityLevel =
   | "Initial"
   | "Foundation"
@@ -190,6 +194,23 @@ export interface DevOpsScoreSummary {
   nextBestActions: string[];
 }
 
+export interface AiReportEnhancement {
+  enabled: boolean;
+  provider: AiProviderName;
+  model?: string;
+  mode: AiMentorMode;
+  generatedAt?: string;
+  mentorSummary: string;
+  scoreInterpretation: string;
+  recommendedFocus: string;
+  riskExplanation: string;
+  mentorNotes: string[];
+  portfolioAdvice: string[];
+  interviewTalkingPoints: string[];
+  improvedNextSteps: string[];
+  learningAdvice: string[];
+}
+
 export interface DevOpsReport {
   id: string;
   repository: RepositoryMetadata;
@@ -200,6 +221,7 @@ export interface DevOpsReport {
   productionChecklist: ProductionChecklistItem[];
   learningPath: LearningPathStep[];
   labs: DevOpsLab[];
+  ai?: AiReportEnhancement;
   analysis?: RepositoryAnalysis;
   generatedAt: string;
 }

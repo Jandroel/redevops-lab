@@ -1,6 +1,6 @@
 # Learning Engine
 
-`packages/learning` turns repository analysis and scoring evidence into educational output. It is deterministic and rule-based; there is no AI, database, repository cloning, GitHub issue creation, or repository writing in this phase.
+`packages/learning` turns repository analysis and scoring evidence into educational output. It is deterministic and rule-based; it does not call AI, use a database, clone repositories, create GitHub issues, or write to repositories.
 
 ## Inputs
 
@@ -67,4 +67,4 @@ This is intentionally not a full i18n framework yet.
 - Security and observability checks are signals, not audits.
 - Private repositories are not supported.
 - There is no persistence.
-- There is no AI explanation layer yet.
+- The optional AI mentor layer lives outside this package and may explain the report, but it does not change learning engine output.
