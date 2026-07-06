@@ -36,7 +36,8 @@ Request:
 {
   "url": "https://github.com/Jandroel/redevops-lab",
   "level": "beginner",
-  "language": "es"
+  "language": "es",
+  "mentorMode": "learning"
 }
 ```
 
@@ -50,6 +51,16 @@ Accepted languages:
 
 - `es`
 - `en`
+
+Optional mentor modes:
+
+- `learning`
+- `interview`
+- `production`
+- `portfolio`
+- `open-source`
+
+`mentorMode` only affects the optional `ai` explanation tone. It does not change analyzer facts, score, checklist, learning path, or labs.
 
 The endpoint uses:
 
@@ -86,6 +97,7 @@ Expected error cases:
 - `403`: GitHub rate limit reached or access restricted
 - `404`: repository not found or not public
 - `409`: repository is empty
+- `408` or `504`: timeout
 - `502`: GitHub network issue or unexpected response
 
 ## GET /reports/demo

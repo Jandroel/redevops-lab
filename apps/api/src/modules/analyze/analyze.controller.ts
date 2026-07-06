@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Inject, Post } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { DevOpsReport } from "@redevops-lab/shared";
 import { AnalyzeService } from "./analyze.service.js";
@@ -7,7 +7,7 @@ import { AnalyzeRepositoryDto } from "./dto/analyze-repository.dto.js";
 @ApiTags("analyze")
 @Controller("analyze")
 export class AnalyzeController {
-  constructor(private readonly analyzeService: AnalyzeService) {}
+  constructor(@Inject(AnalyzeService) private readonly analyzeService: AnalyzeService) {}
 
   @Post()
   @ApiOperation({ summary: "Analyze a public GitHub repository and return a DevOps report." })

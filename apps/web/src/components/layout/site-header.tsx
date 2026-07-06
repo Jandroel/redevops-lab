@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/ui/button";
 
 const navItems = [
   { href: "/analyze", label: "Analyze" },
+  { href: "/examples", label: "Examples" },
   { href: "/report/demo", label: "Demo Report" },
   { href: "https://github.com/Jandroel/redevops-lab", label: "GitHub" }
 ];

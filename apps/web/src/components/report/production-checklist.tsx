@@ -5,9 +5,9 @@ interface ProductionChecklistProps {
   items: readonly ProductionChecklistItem[];
 }
 
-const statusTone: Record<ChecklistItemStatus, "green" | "amber" | "blue"> = {
+const statusTone: Record<ChecklistItemStatus, "green" | "red" | "blue"> = {
   done: "green",
-  missing: "amber",
+  missing: "red",
   recommended: "blue"
 };
 
@@ -18,16 +18,38 @@ const priorityTone: Record<ProductionChecklistItem["priority"], "green" | "amber
 };
 
 export function ProductionChecklist({ items }: ProductionChecklistProps) {
+  const priorityRank: Record<ProductionChecklistItem["priority"], number> = {
+    high: 0,
+    medium: 1,
+    low: 2
+  };
+  const sortedItems = [...items].sort((left, right) => {
+    if (left.status === "done" && right.status !== "done") {
+      return 1;
+    }
+
+    if (left.status !== "done" && right.status === "done") {
+      return -1;
+    }
+
+    return priorityRank[left.priority] - priorityRank[right.priority];
+  });
+
   return (
     <section className="rounded-lg border border-devops-border bg-devops-surface/70 p-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold text-white">Production-ready checklist</h2>
+        <div>
+          <h2 className="text-xl font-semibold text-white">Production-ready checklist</h2>
+          <p className="mt-2 text-sm leading-6 text-devops-muted">
+            Start with high-priority missing items, then move through recommended improvements.
+          </p>
+        </div>
         <Badge tone="blue">{items.length} checks</Badge>
       </div>
 
       {items.length ? (
         <div className="grid gap-4 lg:grid-cols-2">
-          {items.map((item) => (
+          {sortedItems.map((item) => (
             <article key={item.id} className="rounded-lg border border-devops-border bg-slate-950/55 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -39,7 +61,7 @@ export function ProductionChecklist({ items }: ProductionChecklistProps) {
                     item.status === "done"
                       ? "border-devops-green/40 bg-devops-green/10 text-devops-green"
                       : item.status === "missing"
-                        ? "border-devops-amber/40 bg-devops-amber/10 text-devops-amber"
+                        ? "border-devops-red/40 bg-devops-red/10 text-devops-red"
                         : "border-devops-blue/40 bg-devops-blue/10 text-devops-blue"
                   }`}
                 >

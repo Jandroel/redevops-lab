@@ -29,7 +29,7 @@ export function RepositoryAnalyzerForm({ compact = false }: RepositoryAnalyzerFo
     setIsLoading(true);
 
     window.setTimeout(() => {
-      router.push("/report/demo");
+      router.push(`/analyze?repo=${encodeURIComponent(url)}`);
     }, 700);
   }
 
@@ -47,7 +47,7 @@ export function RepositoryAnalyzerForm({ compact = false }: RepositoryAnalyzerFo
           className="h-12"
         />
         <Button type="submit" size="lg" disabled={isLoading} className="shrink-0">
-          {isLoading ? "Analyzing..." : "Analyze a repository"}
+          {isLoading ? "Opening analyzer..." : "Analyze repository"}
         </Button>
       </div>
       {error ? <p className="mt-3 text-sm text-devops-red">{error}</p> : null}

@@ -4,7 +4,7 @@ ReDevOps Lab is organized as a pnpm monorepo so the web app, API, and domain pac
 
 ## Workspaces
 
-- `apps/web`: Next.js application that owns the product interface, marketing landing, analyze form, and visual reports.
+- `apps/web`: Next.js application that owns the product interface, marketing landing, examples page, analyze form, loading/error/empty states, and visual reports.
 - `apps/api`: NestJS API that will expose health, analyze, and report endpoints.
 - `packages/shared`: Shared TypeScript contracts used by apps and domain packages.
 - `packages/analyzer`: GitHub repository analyzer. It validates URLs, reads repository trees, and detects stack and DevOps files.
@@ -26,6 +26,8 @@ User GitHub URL
   -> packages/learning
   -> report response
 ```
+
+The optional `mentorMode` field travels with the analyze request so the AI mentor can adjust its explanation tone. It does not affect analyzer, scoring, checklist, learning path, or lab generation.
 
 ## Backend Modules
 
@@ -90,3 +92,10 @@ The AI layer may explain, summarize, and prioritize. It must not change `analysi
 ## Design Direction
 
 The UI should feel like a serious developer tool: dark by default, technical, scannable, and focused on practical DevOps learning outcomes rather than generic AI chat patterns.
+
+Phase 7 organizes the product around:
+
+- Landing page with analyzer CTA, product preview, feature grid, trust copy, and examples.
+- `/analyze` with validation, level/language/mentor controls, example repos, privacy copy, progress, and actionable errors.
+- `/report/demo` and `/report/[id]` with repository overview, score summary, next actions, category scores, checklist, path, labs, AI mentor, signals, files, and Markdown export.
+- `/examples` with suggested public repositories for quick manual testing.

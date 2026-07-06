@@ -4,7 +4,7 @@
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
-The project is in active development. The current implementation covers the foundation through Phase 6: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, documentation, CI, and deployment-ready structure.
+The project is in active development. The current implementation covers the foundation through Phase 7: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, UI/UX polish, examples, documentation, CI, and deploy-ready structure.
 
 ## Features
 
@@ -16,6 +16,8 @@ The project is in active development. The current implementation covers the foun
 - Personalized learning path generated from score gaps and repository signals
 - Hands-on lab cards with objectives, steps, validation, difficulty, estimated time, and suggested files
 - Optional DevOps AI Mentor layer with mock and OpenAI-compatible providers
+- Product-grade report dashboard with score, evidence, checklist, learning path, labs, mentor notes, and Markdown export
+- Analyzer UX with validation, example repositories, loading progress, and actionable error states
 - Markdown export with checklist, learning path, labs, and scoring evidence
 - Basic Spanish and English report content for educational sections
 - Next.js frontend with dark cloud-native UI
@@ -45,7 +47,7 @@ redevops-lab/
     analyzer/   # GitHub repository analyzer
     scoring/    # Rule-based DevOps scoring engine
     learning/   # Rule-based checklist, learning path, labs, and next steps
-  docs/         # Architecture, API, analyzer, scoring, learning, roadmap, deployment
+  docs/         # Architecture, API, analyzer, scoring, learning, UI, roadmap, deployment
   examples/     # Example reports
 ```
 
@@ -105,15 +107,16 @@ AI_PROVIDER=mock
 AI_MODEL=
 AI_API_KEY=
 AI_BASE_URL=
+AI_MENTOR_MODE=learning
 AI_TEMPERATURE=0.3
 AI_TIMEOUT_MS=20000
 ```
 
-`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. AI is disabled by default and runs only in the backend. Do not commit real secrets.
+`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. AI is disabled by default, mock mode is safe for demos, and provider keys are used only in the backend. Do not commit real secrets.
 
 ## Project Status
 
-ReDevOps Lab is under active development and ready for its first public repository commit. Core analysis, scoring, checklist, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, learning path, or labs.
+ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, learning path, or labs. There is no database, login, private repository support, or real deployment automation yet.
 
 ## Roadmap
 
@@ -123,16 +126,17 @@ ReDevOps Lab is under active development and ready for its first public reposito
 4. Rule-based DevOps scoring engine
 5. Rule-based learning path, hands-on labs, production checklist, and bilingual educational output
 6. Optional AI mentor explanations grounded in analyzer output
-7. Full report page
-8. Markdown export
+7. UI/UX polish, report dashboard organization, examples, loading/error/empty states, and deploy readiness notes
+8. Persisted reports and export polish
 9. PostgreSQL persistence
-10. Portfolio-grade polish, tests, docs, and demo assets
+10. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
 
 ## Deployment Plan
 
 - Frontend: Vercel with project root `apps/web`
 - Backend: Railway with project root `apps/api`
 - Database: Railway PostgreSQL in a later phase
+- Required deploy variables: `NEXT_PUBLIC_API_URL` for web and `CORS_ORIGIN`, `PORT`, optional `GITHUB_TOKEN`, optional AI variables for API
 
 ## Current Mock Boundaries
 

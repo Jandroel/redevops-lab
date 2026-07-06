@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, Inject, Injectable } from "@nestjs/common";
 import { detectInitialFindings, GitHubAnalyzerError, parseGitHubUrl } from "@redevops-lab/analyzer";
 import type { DevOpsReport } from "@redevops-lab/shared";
 import { AiService } from "../ai/ai.service.js";
@@ -9,7 +9,9 @@ import type { AnalyzeRepositoryDto } from "./dto/analyze-repository.dto.js";
 @Injectable()
 export class AnalyzeService {
   constructor(
+    @Inject(GitHubService)
     private readonly githubService: GitHubService,
+    @Inject(AiService)
     private readonly aiService: AiService
   ) {}
 
@@ -27,19 +29,38 @@ export class AnalyzeService {
         {
           url: repository.url,
           level: input.level,
-          language: input.language
+          language: input.language,
+          mentorMode: input.mentorMode
         },
         analysis,
         findings
       );
 
-      return this.aiService.enhanceReport(report);
+      return this.aiService.enhanceReport(report, input.mentorMode);
     } catch (error) {
-      if (error instanceof GitHubAnalyzerError) {
+      if (isGitHubAnalyzerError(error)) {
         throw new HttpException(error.message, error.statusCode);
       }
 
       throw error;
     }
   }
+}
+
+function isGitHubAnalyzerError(error: unknown): error is GitHubAnalyzerError {
+  if (error instanceof GitHubAnalyzerError) {
+    return true;
+  }
+
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+
+  const record = error as Record<string, unknown>;
+
+  return (
+    record.name === "GitHubAnalyzerError" &&
+    typeof record.message === "string" &&
+    typeof record.statusCode === "number"
+  );
 }

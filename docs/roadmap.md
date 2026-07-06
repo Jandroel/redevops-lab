@@ -50,20 +50,23 @@
 - Ground all AI output in real detected findings
 - Avoid invented files, tools, workflows, vulnerabilities, or practices
 
-## Phase 7 - Complete Report Page
+## Phase 7 - UI/UX Polish, Product Feel, and Deploy Readiness
 
-- Score ring
-- Category bars
-- Repo tree
-- Checklist
-- Labs
-- Risk badges
+- Professional landing page with analyzer CTA, product preview, trust copy, and feature grid
+- `/analyze` UX with validation, example repositories, mentor mode selector, privacy copy, progress, and error states
+- Report dashboard hierarchy for overview, score, actions, category scores, checklist, path, labs, AI mentor, signals, files, and export
+- Score visual with rule-based evidence microcopy
+- Improved checklist, learning path timeline, hands-on lab cards, and AI mentor panel
+- Responsive polish for mobile, tablet, desktop, and large desktop
+- Empty states for missing report/session data
+- Deployment notes for Vercel frontend and Railway backend
 
-## Phase 8 - Markdown Export
+## Phase 8 - Persistence and Report Lifecycle
 
-- Generate `redevops-report.md`
-- Include diagnosis, score, path, labs, and next steps
-- Current export already includes score, checklist, learning path, and labs; later phases can polish persisted report export.
+- Persist generated reports beyond session storage
+- Introduce stable report IDs backed by storage
+- Improve exported Markdown around persisted reports
+- Add report lifecycle documentation
 
 ## Phase 9 - Persistence
 

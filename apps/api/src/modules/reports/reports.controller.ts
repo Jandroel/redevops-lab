@@ -1,4 +1,4 @@
-import { Controller, Get, Header, Param } from "@nestjs/common";
+import { Controller, Get, Header, Inject, Param } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { DevOpsReport } from "@redevops-lab/shared";
 import { ReportsService } from "./reports.service.js";
@@ -6,7 +6,7 @@ import { ReportsService } from "./reports.service.js";
 @ApiTags("reports")
 @Controller("reports")
 export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(@Inject(ReportsService) private readonly reportsService: ReportsService) {}
 
   @Get("demo")
   @ApiOperation({ summary: "Return the built-in demo DevOps report." })

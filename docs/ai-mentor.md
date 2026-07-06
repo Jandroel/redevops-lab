@@ -63,6 +63,7 @@ When AI is disabled, the API still returns `report.ai` with a disabled mock ment
 - labs
 - level
 - language
+- mentor mode
 
 It is the default provider and fallback if an external provider fails.
 
@@ -80,6 +81,7 @@ AI_PROVIDER=mock
 AI_MODEL=
 AI_API_KEY=
 AI_BASE_URL=
+AI_MENTOR_MODE=learning
 AI_TEMPERATURE=0.3
 AI_TIMEOUT_MS=20000
 ```
@@ -92,6 +94,7 @@ AI_PROVIDER=deepseek
 AI_MODEL=deepseek-v4-flash
 AI_API_KEY=your_deepseek_api_key
 AI_BASE_URL=https://api.deepseek.com
+AI_MENTOR_MODE=learning
 AI_TEMPERATURE=0.3
 ```
 
@@ -103,8 +106,11 @@ AI_PROVIDER=openai
 AI_MODEL=your-model
 AI_API_KEY=your_api_key
 AI_BASE_URL=https://api.openai.com/v1
+AI_MENTOR_MODE=learning
 AI_TEMPERATURE=0.3
 ```
+
+The `/analyze` UI can send a per-report `mentorMode` value (`learning`, `interview`, `production`, `portfolio`, or `open-source`). That value only changes the explanation style.
 
 ## Safety
 

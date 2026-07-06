@@ -54,6 +54,16 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const nextBestActions = report.score.nextBestActions ?? [];
   const scorePercentage =
     report.score.percentage ?? Math.round((report.score.total / report.score.maxScore) * 100);
+  const quickLinks = [
+    ["Score", "#score"],
+    ["Actions", "#actions"],
+    ["Checklist", "#checklist"],
+    ["Path", "#path"],
+    ["Labs", "#labs"],
+    ["Mentor", "#mentor"],
+    ["Evidence", "#evidence"],
+    ["Export", "#export"]
+  ] as const;
 
   return (
     <section className="bg-devops-bg">
@@ -76,13 +86,19 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-          <ScoreCard
-            score={report.score.total}
-            maxScore={report.score.maxScore}
-            percentage={scorePercentage}
-            maturity={report.score.maturityLevel}
-          />
+        <nav className="mt-6 flex gap-2 overflow-x-auto pb-2" aria-label="Report sections">
+          {quickLinks.map(([label, href]) => (
+            <a
+              key={href}
+              href={href}
+              className="shrink-0 rounded-full border border-devops-border bg-slate-950/55 px-3 py-2 text-sm text-devops-muted transition hover:border-devops-blue/60 hover:text-devops-text focus:outline-none focus:ring-2 focus:ring-devops-blue/60"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+
+        <div id="score" className="mt-8 grid scroll-mt-24 gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <RepoOverviewCard
             repository={report.repository.fullName}
             url={report.repository.url}
@@ -95,14 +111,15 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
               analyzedItems: treeStats?.analyzedItems
             }}
           />
+          <ScoreCard
+            score={report.score.total}
+            maxScore={report.score.maxScore}
+            percentage={scorePercentage}
+            maturity={report.score.maturityLevel}
+          />
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <CategoryScoreBars categories={categories} />
-          <TerminalCommandBlock title="report.contract" lines={terminalLines} />
-        </div>
-
-        <div className="mt-6">
+        <div id="actions" className="mt-6 scroll-mt-24">
           <ScoreInsights
             strengths={scoreStrengths}
             weaknesses={scoreWeaknesses}
@@ -110,8 +127,9 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           />
         </div>
 
-        <div className="mt-6">
-          <AiMentorPanel ai={report.ai} />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <CategoryScoreBars categories={categories} />
+          <TerminalCommandBlock title="report.contract" lines={terminalLines} />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -119,12 +137,43 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           <ChecklistSection title="Risks and missing practices" items={gaps} tone="missing" />
         </div>
 
-        <div className="mt-6">
-          <ScoringEvidence categories={categories} />
+        <div id="checklist" className="mt-6 scroll-mt-24">
+          <ProductionChecklist items={productionChecklist} />
         </div>
 
-        <div className="mt-6">
-          <ProductionChecklist items={productionChecklist} />
+        <div id="path" className="mt-6 scroll-mt-24">
+          <LearningPathTimeline steps={learningPath} />
+        </div>
+
+        <section id="labs" className="mt-6 scroll-mt-24 rounded-lg border border-devops-border bg-slate-950/55 p-6">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-white">Hands-on labs</h2>
+              <p className="mt-2 text-sm leading-6 text-devops-muted">
+                Practical exercises mapped to detected gaps, suggested files, and validation steps.
+              </p>
+            </div>
+            <Badge tone="violet">{labs.length} labs</Badge>
+          </div>
+          {labs.length ? (
+            <div className="grid gap-4 lg:grid-cols-2">
+              {labs.map((lab) => (
+                <LabCard key={lab.id} lab={lab} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-devops-muted">
+              No hands-on labs are available for this report yet.
+            </p>
+          )}
+        </section>
+
+        <div id="mentor" className="mt-6 scroll-mt-24">
+          <AiMentorPanel ai={report.ai} />
+        </div>
+
+        <div id="evidence" className="mt-6 scroll-mt-24">
+          <ScoringEvidence categories={categories} />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -132,19 +181,17 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           <ImportantFiles files={importantFiles} />
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <LearningPathTimeline steps={learningPath} />
-          <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-semibold text-white">Hands-on labs</h2>
-              <Badge tone="violet">{labs.length} labs</Badge>
+        <div id="export" className="mt-6 scroll-mt-24 rounded-lg border border-devops-border bg-devops-surface/70 p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-white">Export Markdown</h2>
+              <p className="mt-2 text-sm leading-6 text-devops-muted">
+                Save the report as a Markdown artifact for portfolio notes, issue planning, or pull
+                request context.
+              </p>
             </div>
-            <div className="grid gap-4">
-              {labs.map((lab) => (
-                <LabCard key={lab.id} lab={lab} />
-              ))}
-            </div>
-          </section>
+            <ExportMarkdownButton reportId={report.id} report={report} />
+          </div>
         </div>
       </div>
     </section>

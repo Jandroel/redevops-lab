@@ -2,7 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { RepositoryAnalyzerForm } from "@/components/marketing/repository-analyzer-form";
 
-const badges = ["CI/CD", "Docker", "Kubernetes", "Terraform", "Observability", "Security"];
+const badges = [
+  "GitHub Analyzer",
+  "DevOps Score",
+  "AI Mentor",
+  "Hands-on Labs",
+  "Markdown Export"
+];
 
 export function HeroSection() {
   return (
@@ -21,11 +27,11 @@ export function HeroSection() {
             ))}
           </div>
           <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-normal text-white sm:text-6xl lg:text-7xl">
-            ReDevOps Lab
+            Turn any GitHub repository into a DevOps learning lab.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-devops-muted sm:text-xl">
-            Turn any GitHub repository into a DevOps learning lab with a maturity score,
-            production-readiness checklist, detected stack, missing practices, and hands-on labs.
+            Analyze real repositories, uncover DevOps gaps, calculate a maturity score, and get a
+            personalized path to become production-ready.
           </p>
           <div className="mt-8 max-w-3xl">
             <RepositoryAnalyzerForm />
@@ -36,6 +42,9 @@ export function HeroSection() {
             </ButtonLink>
             <ButtonLink href="/report/demo" variant="ghost">
               View demo report
+            </ButtonLink>
+            <ButtonLink href="/examples" variant="ghost">
+              Example repos
             </ButtonLink>
           </div>
         </div>

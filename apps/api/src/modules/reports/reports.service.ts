@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import type { DevOpsReport } from "@redevops-lab/shared";
 import { AiService } from "../ai/ai.service.js";
 import { createDemoReport } from "./report.mock.js";
@@ -8,7 +8,7 @@ const demoReportIds = new Set(["demo", "demo-jandroel-redevops-lab"]);
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly aiService: AiService) {}
+  constructor(@Inject(AiService) private readonly aiService: AiService) {}
 
   getDemoReport(): Promise<DevOpsReport> {
     return this.aiService.enhanceReport(createDemoReport());

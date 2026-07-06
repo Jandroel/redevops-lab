@@ -57,6 +57,7 @@ export interface RepositoryInput {
   url: string;
   level: ExperienceLevel;
   language: ReportLanguage;
+  mentorMode?: AiMentorMode;
 }
 
 export interface RepositoryIdentity {

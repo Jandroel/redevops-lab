@@ -2,34 +2,39 @@ import { Badge } from "@/components/ui/badge";
 
 const features = [
   {
-    title: "DevOps Maturity Score",
-    body: "A clear score that summarizes readiness across automation, security, configuration, and operations.",
+    title: "GitHub Repository Analyzer",
+    body: "Reads public repository metadata and file-tree signals without cloning or modifying the repo.",
     tone: "green"
+  },
+  {
+    title: "Rule-based DevOps Score",
+    body: "Calculates maturity from detected evidence across CI/CD, containers, security, docs, and operations.",
+    tone: "blue"
   },
   {
     title: "Production-ready Checklist",
-    body: "Concrete missing practices that move a repository closer to a deployable baseline.",
-    tone: "blue"
-  },
-  {
-    title: "Hands-on Labs",
-    body: "Practical exercises mapped to the actual repo, not generic tasks detached from the codebase.",
+    body: "Prioritizes missing practices with status, category, priority, and evidence for what to fix first.",
     tone: "violet"
   },
   {
-    title: "Stack Detection",
-    body: "Future analyzer rules will detect frameworks, package managers, databases, and infrastructure clues.",
+    title: "Learning Path",
+    body: "Turns score gaps into a sequenced DevOps roadmap that matches the repository and experience level.",
     tone: "amber"
   },
   {
-    title: "Learning Path",
-    body: "A recommended sequence from foundation work to CI, security, observability, and deployment.",
+    title: "Hands-on Labs",
+    body: "Creates practical exercises with objective, steps, validation, estimated time, and suggested files.",
     tone: "green"
   },
   {
-    title: "Markdown Export",
-    body: "Reports will be exportable as a developer-friendly document for issues, pull requests, or portfolios.",
+    title: "Optional AI Mentor",
+    body: "Explains and prioritizes the deterministic report when enabled, with mock mode as the safe default.",
     tone: "blue"
+  },
+  {
+    title: "Markdown Export",
+    body: "Exports the report as a developer-friendly Markdown artifact for issues, pull requests, or portfolios.",
+    tone: "violet"
   }
 ] as const;
 
@@ -42,8 +47,12 @@ export function FeatureGrid() {
             Analyzer-first workflow
           </p>
           <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
-            Everything points toward a better repository.
+            Evidence first, mentor second, practical next steps always.
           </h2>
+          <p className="mt-4 leading-8 text-devops-muted">
+            The score is calculated from detected repository signals, not guessed by AI. The mentor
+            layer only explains what the analyzer already found.
+          </p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (

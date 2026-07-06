@@ -16,7 +16,7 @@ export function ImportantFiles({ files }: ImportantFilesProps) {
           {files.slice(0, 24).map((file) => (
             <span
               key={file}
-              className="rounded-md border border-devops-border bg-devops-surface/70 px-3 py-2 font-mono text-xs text-devops-muted"
+              className="max-w-full break-words rounded-md border border-devops-border bg-devops-surface/70 px-3 py-2 font-mono text-xs text-devops-muted"
             >
               {file}
             </span>

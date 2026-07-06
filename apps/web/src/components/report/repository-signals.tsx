@@ -31,7 +31,7 @@ export function RepositorySignals({ signals }: RepositorySignalsProps) {
                   {signal.files.slice(0, 3).map((file) => (
                     <span
                       key={file}
-                      className="rounded-md border border-devops-border bg-slate-950/75 px-2 py-1 font-mono text-xs text-devops-muted"
+                      className="max-w-full break-words rounded-md border border-devops-border bg-slate-950/75 px-2 py-1 font-mono text-xs text-devops-muted"
                     >
                       {file}
                     </span>

@@ -21,7 +21,9 @@ export function LabCard({ lab }: LabCardProps) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold text-white">{lab.title}</h3>
-          <p className="mt-2 text-sm leading-6 text-devops-muted">{lab.objective}</p>
+          <p className="mt-2 text-sm leading-6 text-devops-muted">
+            <span className="font-semibold text-devops-text">Objective:</span> {lab.objective}
+          </p>
         </div>
         <div className="flex flex-wrap justify-end gap-2">
           <Badge tone={difficultyTone[difficulty]}>{difficulty}</Badge>
@@ -29,32 +31,47 @@ export function LabCard({ lab }: LabCardProps) {
           {lab.estimatedTime ? <Badge tone="blue">{lab.estimatedTime}</Badge> : null}
         </div>
       </div>
-      <p className="mt-4 rounded-md border border-devops-border bg-slate-950/55 p-3 text-sm leading-6 text-devops-muted">
-        {lab.whyItMatters ?? "This lab turns the repository finding into a practical improvement."}
-      </p>
-      {steps.length ? (
-        <ol className="mt-4 space-y-2 text-sm leading-6 text-devops-muted">
-          {steps.map((step, index) => (
-            <li key={step} className="grid grid-cols-[1.5rem_1fr] gap-2">
-              <span className="font-mono text-xs text-sky-200">{index + 1}.</span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-      ) : null}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {suggestedFiles.map((file) => (
-          <span
-            key={file}
-            className="max-w-full break-words rounded-md border border-devops-border bg-slate-950/75 px-2.5 py-1 font-mono text-xs text-devops-muted"
-          >
-            {file}
-          </span>
-        ))}
+      <div className="mt-4 rounded-md border border-devops-border bg-slate-950/55 p-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-devops-blue">
+          Why it matters
+        </p>
+        <p className="mt-2 text-sm leading-6 text-devops-muted">
+          {lab.whyItMatters ?? "This lab turns the repository finding into a practical improvement."}
+        </p>
       </div>
-      <p className="mt-4 text-xs leading-5 text-devops-muted">
-        <span className="font-semibold text-devops-text">Validation:</span> {lab.validation}
-      </p>
+      {steps.length ? (
+        <div className="mt-4">
+          <p className="text-sm font-medium text-devops-text">Practice steps</p>
+          <ol className="mt-3 space-y-2 text-sm leading-6 text-devops-muted">
+            {steps.map((step, index) => (
+              <li key={step} className="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span className="font-mono text-xs text-sky-200">{index + 1}.</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
+      {suggestedFiles.length ? (
+        <div className="mt-4">
+          <p className="text-sm font-medium text-devops-text">Suggested files</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {suggestedFiles.map((file) => (
+              <span
+                key={file}
+                className="max-w-full break-words rounded-md border border-devops-border bg-slate-950/75 px-2.5 py-1 font-mono text-xs text-devops-muted"
+              >
+                {file}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      <div className="mt-4 rounded-md border border-devops-border bg-devops-bg/80 p-3 font-mono text-xs leading-5 text-devops-muted">
+        <span className="text-devops-green">$ validate-lab</span>
+        <br />
+        <span>{lab.validation}</span>
+      </div>
     </article>
   );
 }

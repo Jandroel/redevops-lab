@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import type { AiMentorMode, DevOpsReport } from "@redevops-lab/shared";
 import { readAiConfig } from "./ai.config.js";
 import { MockAiProvider } from "./providers/mock-ai.provider.js";
@@ -7,7 +7,9 @@ import { OpenAICompatibleProvider } from "./providers/openai-compatible.provider
 @Injectable()
 export class AiService {
   constructor(
+    @Inject(MockAiProvider)
     private readonly mockProvider: MockAiProvider,
+    @Inject(OpenAICompatibleProvider)
     private readonly openAiCompatibleProvider: OpenAICompatibleProvider
   ) {}
 
