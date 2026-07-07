@@ -6,11 +6,15 @@ import { json, urlencoded } from "express";
 import helmet from "helmet";
 import { AppModule } from "./app.module.js";
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter.js";
+import { configureProxyFetchFromEnv } from "./common/http/proxy-fetch.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false
   });
+
+  configureProxyFetchFromEnv();
+
   const port = Number(process.env.PORT ?? 3001);
   const corsOrigin = process.env.CORS_ORIGIN ?? "http://localhost:3000";
 

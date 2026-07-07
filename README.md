@@ -102,6 +102,10 @@ CORS_ORIGIN=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 DATABASE_URL=postgresql://user:password@localhost:5432/redevops_lab
 GITHUB_TOKEN=
+# Network proxy - optional
+HTTP_PROXY=
+HTTPS_PROXY=
+NO_PROXY=localhost,127.0.0.1
 # AI - optional
 AI_ENABLED=false
 AI_PROVIDER=mock
@@ -113,7 +117,7 @@ AI_TEMPERATURE=0.3
 AI_TIMEOUT_MS=20000
 ```
 
-`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. AI is disabled by default, mock mode is safe for demos, and provider keys are used only in the backend. Do not commit real secrets.
+`GITHUB_TOKEN` is optional and only increases GitHub API rate limits for public repository analysis. If your network blocks direct Node.js HTTPS requests, set `HTTPS_PROXY` and `HTTP_PROXY` before starting `pnpm dev:api` or place them in the local API environment file. AI is disabled by default, mock mode is safe for demos, and provider keys are used only in the backend. Do not commit real secrets.
 
 ## Project Status
 
