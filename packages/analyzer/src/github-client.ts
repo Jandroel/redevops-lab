@@ -16,6 +16,7 @@ export class GitHubAnalyzerError extends Error {
       | "rate_limited"
       | "empty_repository"
       | "unexpected_response"
+      | "timeout"
       | "network_error",
     message: string,
     readonly statusCode: number
@@ -130,7 +131,8 @@ export async function fetchGitHubRepositoryTree(
 
 async function githubRequest<T>(url: string, options: GitHubClientOptions): Promise<T> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 15_000);
+  const timeoutMs = options.timeoutMs ?? 15_000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const headers: Record<string, string> = {
@@ -149,7 +151,7 @@ async function githubRequest<T>(url: string, options: GitHubClientOptions): Prom
     });
 
     if (!response.ok) {
-      throw mapGitHubError(response.status);
+      throw await mapGitHubError(response);
     }
 
     return (await response.json()) as T;
@@ -158,18 +160,24 @@ async function githubRequest<T>(url: string, options: GitHubClientOptions): Prom
       throw error;
     }
 
-    throw new GitHubAnalyzerError(
-      "network_error",
-      "Could not reach GitHub while analyzing the repository.",
-      502
-    );
+    if (isAbortError(error)) {
+      throw new GitHubAnalyzerError(
+        "timeout",
+        `GitHub request timed out after ${timeoutMs}ms while analyzing the repository.`,
+        504
+      );
+    }
+
+    throw new GitHubAnalyzerError("network_error", createNetworkErrorMessage(error), 502);
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function mapGitHubError(status: number): GitHubAnalyzerError {
-  if (status === 404) {
+async function mapGitHubError(response: Response): Promise<GitHubAnalyzerError> {
+  const message = await readGitHubErrorMessage(response);
+
+  if (response.status === 404) {
     return new GitHubAnalyzerError(
       "not_found",
       "GitHub repository was not found or is not public.",
@@ -177,21 +185,50 @@ function mapGitHubError(status: number): GitHubAnalyzerError {
     );
   }
 
-  if (status === 403) {
+  if (response.status === 401 || response.status === 403) {
+    const rateLimitRemaining = response.headers.get("x-ratelimit-remaining");
+    const rateLimited = rateLimitRemaining === "0" || message.toLowerCase().includes("rate limit");
+
     return new GitHubAnalyzerError(
       "rate_limited",
-      "GitHub rate limit reached or access was restricted.",
+      rateLimited
+        ? "GitHub rate limit reached. Configure GITHUB_TOKEN or try again later."
+        : "GitHub access was restricted while analyzing the repository.",
       403
     );
   }
 
-  if (status === 409) {
+  if (response.status === 409) {
     return new GitHubAnalyzerError("empty_repository", "The repository appears to be empty.", 409);
   }
 
   return new GitHubAnalyzerError(
     "unexpected_response",
-    "GitHub returned an unexpected response.",
+    message ? `GitHub returned an unexpected response: ${message}` : "GitHub returned an unexpected response.",
     502
   );
+}
+
+async function readGitHubErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = (await response.json()) as { message?: unknown };
+
+    return typeof body.message === "string" ? body.message : "";
+  } catch {
+    return "";
+  }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+function createNetworkErrorMessage(error: unknown): string {
+  const cause = error instanceof Error && "cause" in error ? String(error.cause) : "";
+
+  if (cause.toLowerCase().includes("connecttimeout")) {
+    return "Could not reach GitHub from the API runtime before the connection timed out.";
+  }
+
+  return "Could not reach GitHub while analyzing the repository.";
 }

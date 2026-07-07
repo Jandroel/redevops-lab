@@ -72,6 +72,7 @@ pnpm dev:web      # Run only the Next.js app
 pnpm dev:api      # Run only the NestJS API
 pnpm lint         # Lint all workspaces
 pnpm typecheck    # Typecheck all workspaces
+pnpm test         # Build packages and run Node.js domain tests
 pnpm build        # Build all workspaces
 pnpm build:packages # Build shared, analyzer, scoring, and learning packages
 pnpm format       # Format the repository

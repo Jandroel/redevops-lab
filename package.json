@@ -20,6 +20,7 @@
     "build:api": "pnpm build:packages && pnpm --filter @redevops-lab/api build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
+    "test": "pnpm build:packages && node --test tests/*.test.mjs",
     "format": "prettier --write ."
   },
   "devDependencies": {
