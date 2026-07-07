@@ -42,14 +42,19 @@ export function AiMentorPanel({ ai }: AiMentorPanelProps) {
             <MentorCard title="Risk explanation" body={ai.riskExplanation} />
           </div>
           <div className="mt-4 grid gap-4 lg:grid-cols-3">
-            <MentorList title="Next mentor steps" items={ai.improvedNextSteps} tone="blue" />
+            <MentorList
+              title="Next mentor steps"
+              items={ai.improvedNextSteps}
+              tone="blue"
+              defaultOpen
+            />
             <MentorList title="Portfolio advice" items={ai.portfolioAdvice} tone="green" />
             <MentorList
               title="Interview talking points"
               items={ai.interviewTalkingPoints}
               tone="violet"
             />
-            <MentorList title="Learning advice" items={ai.learningAdvice} tone="blue" />
+            <MentorList title="Learning advice" items={ai.learningAdvice} tone="blue" defaultOpen />
             <MentorList title="Mentor notes" items={ai.mentorNotes} tone="green" />
           </div>
         </>
@@ -88,20 +93,30 @@ interface MentorListProps {
   title: string;
   items: readonly string[];
   tone: "green" | "blue" | "violet";
+  defaultOpen?: boolean;
 }
 
-function MentorList({ title, items, tone }: MentorListProps) {
+function MentorList({ title, items, tone, defaultOpen = false }: MentorListProps) {
   const dotClass =
     tone === "green" ? "bg-devops-green" : tone === "blue" ? "bg-devops-blue" : "bg-devops-violet";
 
   return (
-    <article className="rounded-lg border border-devops-border bg-slate-950/55 p-5">
-      <div className="mb-3 flex items-center justify-between gap-3">
+    <details
+      open={defaultOpen}
+      className="group rounded-lg border border-devops-border bg-slate-950/55 p-5"
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 focus:outline-none focus:ring-2 focus:ring-devops-blue/60 [&::-webkit-details-marker]:hidden">
         <h3 className="font-semibold text-white">{title}</h3>
-        <Badge tone={tone}>{items.length}</Badge>
-      </div>
+        <span className="flex items-center gap-2">
+          <Badge tone={tone}>{items.length}</Badge>
+          <span className="font-mono text-xs text-devops-muted">
+            <span className="group-open:hidden">open</span>
+            <span className="hidden group-open:inline">close</span>
+          </span>
+        </span>
+      </summary>
       {items.length ? (
-        <ul className="space-y-2 text-sm leading-6 text-devops-muted">
+        <ul className="mt-3 space-y-2 text-sm leading-6 text-devops-muted">
           {items.map((item) => (
             <li key={item} className="flex gap-3">
               <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${dotClass}`} />
@@ -110,8 +125,10 @@ function MentorList({ title, items, tone }: MentorListProps) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-devops-muted">No mentor items available for this section.</p>
+        <p className="mt-3 text-sm text-devops-muted">
+          No mentor items available for this section.
+        </p>
       )}
-    </article>
+    </details>
   );
 }

@@ -6,13 +6,13 @@ interface ImportantFilesProps {
 
 export function ImportantFiles({ files }: ImportantFilesProps) {
   return (
-    <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
-      <div className="mb-5 flex items-center justify-between gap-4">
+    <section className="min-w-0 rounded-lg border border-devops-border bg-slate-950/55 p-6">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl font-semibold text-white">Important files</h2>
         <Badge tone="slate">{files.length} files</Badge>
       </div>
       {files.length ? (
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2 sm:grid-cols-2">
           {files.slice(0, 24).map((file) => (
             <span
               key={file}

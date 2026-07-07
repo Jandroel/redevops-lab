@@ -6,9 +6,9 @@ interface CategoryScoreBarsProps {
 
 export function CategoryScoreBars({ categories }: CategoryScoreBarsProps) {
   return (
-    <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
+    <section className="min-w-0 rounded-lg border border-devops-border bg-slate-950/55 p-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
           <h2 className="text-xl font-semibold text-white">Category scores</h2>
           <p className="mt-2 text-sm text-devops-muted">Rule coverage by DevOps practice area.</p>
         </div>
@@ -17,8 +17,8 @@ export function CategoryScoreBars({ categories }: CategoryScoreBarsProps) {
       <div className="space-y-5">
         {categories.map((category) => (
           <div key={category.name}>
-            <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="text-devops-text">{category.name}</span>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span className="min-w-0 text-devops-text">{category.name}</span>
               <span className="font-mono text-devops-muted">
                 {category.score}/{category.maxScore}
               </span>

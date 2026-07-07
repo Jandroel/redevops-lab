@@ -16,11 +16,11 @@ interface RepoOverviewCardProps {
 
 export function RepoOverviewCard({ repository, url, stack, metadata }: RepoOverviewCardProps) {
   return (
-    <section className="rounded-lg border border-devops-border bg-slate-950/55 p-6">
+    <section className="min-w-0 rounded-lg border border-devops-border bg-slate-950/55 p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-sm text-devops-green">Analyzed repository</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">{repository}</h2>
+          <h2 className="mt-2 break-words text-2xl font-semibold text-white">{repository}</h2>
           <a href={url} className="mt-2 block break-all text-sm text-devops-blue hover:text-sky-200">
             {url}
           </a>
@@ -34,7 +34,7 @@ export function RepoOverviewCard({ repository, url, stack, metadata }: RepoOverv
           </Badge>
         ))}
       </div>
-      <div className="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 text-sm sm:grid-cols-4">
         {[
           ["Branch", metadata?.defaultBranch ?? "unknown"],
           ["Stars", metadata?.stars?.toLocaleString() ?? "unknown"],

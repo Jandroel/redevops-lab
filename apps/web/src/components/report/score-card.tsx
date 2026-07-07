@@ -11,7 +11,7 @@ export function ScoreCard({ score, maxScore, percentage, maturity }: ScoreCardPr
   const degrees = Math.min(100, Math.max(0, percentage)) * 3.6;
 
   return (
-    <section className="panel-edge rounded-lg border border-devops-border bg-devops-surface/80 p-6">
+    <section className="panel-edge min-w-0 rounded-lg border border-devops-border bg-devops-surface/80 p-6">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <Badge tone="green">DevOps Score</Badge>

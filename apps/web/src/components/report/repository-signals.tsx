@@ -7,20 +7,20 @@ interface RepositorySignalsProps {
 
 export function RepositorySignals({ signals }: RepositorySignalsProps) {
   return (
-    <section className="rounded-lg border border-devops-border bg-devops-surface/70 p-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
+    <section className="min-w-0 rounded-lg border border-devops-border bg-devops-surface/70 p-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl font-semibold text-white">Repository Signals</h2>
         <Badge tone="blue">{signals.filter((signal) => signal.detected).length} detected</Badge>
       </div>
       {signals.length ? (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
           {signals.map((signal) => (
             <article
               key={signal.key}
-              className="rounded-lg border border-devops-border bg-slate-950/55 p-4"
+              className="min-w-0 rounded-lg border border-devops-border bg-slate-950/55 p-4"
             >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-white">{signal.label}</h3>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="min-w-0 text-sm font-semibold text-white">{signal.label}</h3>
                 <Badge tone={signal.detected ? "green" : "amber"}>
                   {signal.detected ? "Detected" : "Missing"}
                 </Badge>

@@ -1,11 +1,20 @@
+"use client";
+
 import type { DevOpsCategoryScore } from "@redevops-lab/shared";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface ScoringEvidenceProps {
   categories: readonly DevOpsCategoryScore[];
+  initialVisibleCount?: number;
 }
 
-export function ScoringEvidence({ categories }: ScoringEvidenceProps) {
+export function ScoringEvidence({ categories, initialVisibleCount = 4 }: ScoringEvidenceProps) {
+  const [expanded, setExpanded] = useState(false);
+  const visibleCategories = expanded ? categories : categories.slice(0, initialVisibleCount);
+  const remainingCategories = Math.max(categories.length - visibleCategories.length, 0);
+
   return (
     <section className="rounded-lg border border-devops-border bg-devops-surface/70 p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -13,7 +22,7 @@ export function ScoringEvidence({ categories }: ScoringEvidenceProps) {
         <Badge tone="green">Explainable rules</Badge>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        {categories.map((category) => (
+        {visibleCategories.map((category) => (
           <article key={category.key} className="rounded-lg border border-devops-border bg-slate-950/55 p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -58,6 +67,15 @@ export function ScoringEvidence({ categories }: ScoringEvidenceProps) {
           </article>
         ))}
       </div>
+      {categories.length > initialVisibleCount ? (
+        <div className="mt-6 flex justify-center">
+          <Button variant="secondary" onClick={() => setExpanded((value) => !value)}>
+            {expanded
+              ? "Show fewer categories"
+              : `Show ${remainingCategories} more categories`}
+          </Button>
+        </div>
+      ) : null}
     </section>
   );
 }
