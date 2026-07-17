@@ -31,7 +31,8 @@ Phase 7 defines ReDevOps Lab as a technical developer tool: dark, focused, evide
 - Score card with ring, maturity badge, and rule-based score microcopy.
 - Category bars for score breakdown.
 - Production checklist cards with status, priority, category, and evidence.
-- Beginner learning journey with module selector, local progress, concept links, lab links, and checklist links.
+- Guided learning mode with a prioritized mission rail, one active mission, local step progress, knowledge checks, evidence confidence, contextual term help, and a re-analysis action.
+- Technical report mode with the complete score, findings, checklist, path, labs, mentor notes, signals, files, and export.
 - Concept glossary with search and category filters.
 - Learning path timeline with topics, related files, and related labs.
 - Lab cards with objective, rationale, prerequisites, commands, steps, suggested files, expected outcome, mistakes, completion criteria, verification checklist, and validation.
@@ -41,6 +42,9 @@ Phase 7 defines ReDevOps Lab as a technical developer tool: dark, focused, evide
 
 - Evidence first: analyzer facts and score rules are the source of truth.
 - Teach before asking for action: beginner users should see the term, plain-language explanation, lab, and validation flow together.
+- Progressive disclosure: beginners start with one mission and opt into the complete technical report when ready.
+- Honest confidence: distinguish a visible file from an inference and from a conclusion that needs manual review.
+- Close the feedback loop: every guided path should end in validation and re-analysis, not only a completed checkbox.
 - AI second: mentor guidance explains and prioritizes, but does not change report facts.
 - Keep public-repo boundaries clear.
 - Prefer actionable errors with a retry path and demo fallback.
@@ -52,4 +56,4 @@ Phase 7 defines ReDevOps Lab as a technical developer tool: dark, focused, evide
 - No login, database, private repositories, billing, autonomous agents, or real deployment automation.
 - AI provider keys must stay backend-only.
 - Loading progress is frontend-controlled; it is not streaming from the API yet.
-- Learning progress is local to the browser until persistence is added.
+- Mission, step, and knowledge-check progress is local to the browser until persistence is added.

@@ -8,6 +8,7 @@ import {
 import { calculateDevOpsScore } from "../packages/scoring/dist/index.js";
 import {
   generateDevOpsConcepts,
+  generateGuidedLearningMissions,
   generateHandsOnLabs,
   generateLearningPath,
   generateLearningModules,
@@ -64,9 +65,7 @@ test("GitHub client maps aborted requests to timeout errors", async () => {
     await assert.rejects(
       () => fetchGitHubRepositoryMetadata("Jandroel", "redevops-lab", { timeoutMs: 100 }),
       (error) =>
-        error instanceof GitHubAnalyzerError &&
-        error.code === "timeout" &&
-        error.statusCode === 504
+        error instanceof GitHubAnalyzerError && error.code === "timeout" && error.statusCode === 504
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -113,6 +112,15 @@ test("scoring and learning engines generate useful deterministic output", () => 
     level: "beginner",
     language: "en"
   });
+  const guidedMissions = generateGuidedLearningMissions({
+    analysis,
+    checklist,
+    modules: learningModules,
+    labs,
+    concepts,
+    level: "beginner",
+    language: "en"
+  });
 
   assert.equal(score.maxScore, 100);
   assert.equal(score.categories.length, 7);
@@ -126,6 +134,16 @@ test("scoring and learning engines generate useful deterministic output", () => 
   assert.ok(concepts.some((concept) => concept.id === "devops-feedback-loop"));
   assert.ok(learningModules.length >= 3);
   assert.ok(learningModules.every((module) => module.beginnerGoal && module.outcome));
+  assert.ok(guidedMissions.length >= 3);
+  assert.ok(guidedMissions.length <= 4);
+  assert.ok(guidedMissions.every((mission) => mission.steps.length >= 3));
+  assert.ok(guidedMissions.every((mission) => mission.evidence.length >= 1));
+  assert.ok(
+    guidedMissions.every((mission) =>
+      mission.knowledgeCheck.options.some((option) => option.correct)
+    )
+  );
+  assert.equal(guidedMissions[0].evidenceLevel, "inferred");
 });
 
 function createAnalysisFixture() {

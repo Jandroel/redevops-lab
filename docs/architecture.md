@@ -9,7 +9,7 @@ ReDevOps Lab is organized as a pnpm monorepo so the web app, API, and domain pac
 - `packages/shared`: Shared TypeScript contracts used by apps and domain packages.
 - `packages/analyzer`: GitHub repository analyzer. It validates URLs, reads repository trees, and detects stack and DevOps files.
 - `packages/scoring`: Rule-based scoring engine. It turns analyzer evidence into a DevOps maturity score, category breakdown, rule evidence, strengths, weaknesses, and next best actions.
-- `packages/learning`: Rule-based learning engine. It turns analysis and score gaps into a production-ready checklist, beginner concepts, guided modules, learning path, hands-on labs, and educational next steps.
+- `packages/learning`: Rule-based learning engine. It turns analysis and score gaps into a production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, and educational next steps.
 
 ## Data Flow
 
@@ -24,7 +24,7 @@ User GitHub URL
   -> packages/analyzer
   -> packages/scoring
   -> packages/learning
-  -> beginner concepts and modules
+  -> beginner concepts, modules, and prioritized missions
   -> report response
 ```
 
@@ -61,6 +61,8 @@ The API also configures Helmet, CORS, request validation, Swagger/OpenAPI, a glo
 - generating 4 to 8 hands-on labs with objective, rationale, prerequisites, suggested commands, steps, validation, common mistakes, completion criteria, difficulty, estimated time, and suggested files
 - generating practical glossary concepts for beginner-friendly explanations
 - generating guided learning modules that link concepts, labs, checklist evidence, and outcomes
+- ranking guided missions from checklist status and priority
+- attaching evidence confidence, small practice steps, completion criteria, and knowledge checks to each mission
 - adapting educational copy to `level` (`beginner`, `intermediate`, `advanced`)
 - emitting basic Spanish or English content through `language` (`es`, `en`)
 
@@ -105,7 +107,9 @@ Phase 7 organizes the product around:
 
 Phase 8 adds beginner education inside the report:
 
-- Interactive learning journey with local progress.
+- Guided mode that presents one prioritized mission at a time, with local step and quiz progress.
+- Technical mode that preserves the complete report for deeper inspection.
+- Evidence confidence labels that distinguish confirmed files, inference from missing signals, and manual review.
 - Practical concept glossary generated from report context.
 - Lab cards with prerequisites, commands, expected outcomes, mistakes, completion criteria, and verification checklist.
 - Markdown export that includes modules, glossary, and enriched lab guidance.

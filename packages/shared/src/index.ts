@@ -5,13 +5,7 @@ export type ReportLanguage = "es" | "en";
 export type RepositoryProvider = "github";
 
 export type StackCategory =
-  | "frontend"
-  | "backend"
-  | "database"
-  | "devops"
-  | "language"
-  | "testing"
-  | "unknown";
+  "frontend" | "backend" | "database" | "devops" | "language" | "testing" | "unknown";
 
 export type RepoTreeItemType = "file" | "directory" | "symlink" | "submodule" | "unknown";
 
@@ -43,11 +37,7 @@ export type AiProviderName = "mock" | "openai" | "deepseek" | "openrouter" | "gr
 export type AiMentorMode = "learning" | "interview" | "production" | "portfolio" | "open-source";
 
 export type DevOpsMaturityLevel =
-  | "Initial"
-  | "Foundation"
-  | "Operational"
-  | "Production-Ready"
-  | "Advanced";
+  "Initial" | "Foundation" | "Operational" | "Production-Ready" | "Advanced";
 
 export type FindingType = "strength" | "missing" | "risk" | "recommendation";
 
@@ -216,6 +206,59 @@ export interface DevOpsLearningModule {
   outcome: string;
 }
 
+export type LearningEvidenceLevel = "confirmed" | "inferred" | "needs-review";
+
+export interface LearningMissionEvidence {
+  id: string;
+  label: string;
+  detail: string;
+  level: LearningEvidenceLevel;
+  files: string[];
+}
+
+export interface LearningMissionStep {
+  id: string;
+  title: string;
+  instruction: string;
+}
+
+export interface LearningCheckOption {
+  id: string;
+  label: string;
+  correct: boolean;
+  feedback: string;
+}
+
+export interface LearningKnowledgeCheck {
+  question: string;
+  options: LearningCheckOption[];
+  explanation: string;
+}
+
+export interface GuidedLearningMission {
+  id: string;
+  order: number;
+  title: string;
+  category: DevOpsLearningModule["category"];
+  summary: string;
+  plainLanguageGoal: string;
+  whyNow: string;
+  estimatedTime: string;
+  evidenceLevel: LearningEvidenceLevel;
+  evidenceReason: string;
+  evidence: LearningMissionEvidence[];
+  conceptIds: string[];
+  labId?: string;
+  prerequisites: string[];
+  suggestedFiles: string[];
+  commands: string[];
+  steps: LearningMissionStep[];
+  expectedOutcome: string;
+  completionCriteria: string[];
+  knowledgeCheck: LearningKnowledgeCheck;
+  completionMessage: string;
+}
+
 export interface DevOpsScoreSummary {
   total: number;
   maxScore: number;
@@ -256,6 +299,7 @@ export interface DevOpsReport {
   labs: DevOpsLab[];
   concepts?: DevOpsConcept[];
   learningModules?: DevOpsLearningModule[];
+  guidedMissions?: GuidedLearningMission[];
   ai?: AiReportEnhancement;
   analysis?: RepositoryAnalysis;
   generatedAt: string;

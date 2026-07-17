@@ -13,6 +13,7 @@ import { LearningPathTimeline } from "@/components/report/learning-path-timeline
 import { ProductionChecklist } from "@/components/report/production-checklist";
 import { RepoOverviewCard } from "@/components/report/repo-overview-card";
 import { RepositorySignals } from "@/components/report/repository-signals";
+import { ReportModeSwitcher } from "@/components/report/report-mode-switcher";
 import { ScoreCard } from "@/components/report/score-card";
 import { ScoreInsights } from "@/components/report/score-insights";
 import { ScoringEvidence } from "@/components/report/scoring-evidence";
@@ -35,6 +36,7 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const labs = report.labs ?? [];
   const concepts = report.concepts ?? [];
   const learningModules = report.learningModules ?? [];
+  const guidedMissions = report.guidedMissions ?? [];
   const terminalLines = [
     `report.id = ${report.id}`,
     `repository = ${report.repository.fullName}`,
@@ -45,6 +47,7 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
     `language = ${report.input.language}`,
     `checklist.items = ${productionChecklist.length}`,
     `learning.modules = ${learningModules.length}`,
+    `learning.missions = ${guidedMissions.length}`,
     `concepts.generated = ${concepts.length}`,
     `labs.generated = ${labs.length}`,
     `ai.provider = ${report.ai?.provider ?? "mock"}`,
@@ -63,7 +66,6 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const quickLinks = [
     { label: "Overview", href: "#score", meta: `${scorePercentage}%` },
     { label: "Actions", href: "#actions", meta: `${nextBestActions.length}` },
-    { label: "Learn", href: "#learn", meta: `${learningModules.length}` },
     { label: "Concepts", href: "#concepts", meta: `${concepts.length}` },
     { label: "Checklist", href: "#checklist", meta: `${productionChecklist.length}` },
     { label: "Path", href: "#path", meta: `${learningPath.length}` },
@@ -80,12 +82,14 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           <div>
             <Badge tone="blue">{sourceLabel}</Badge>
             <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">
-              DevOps readiness report
+              {report.input.language === "es"
+                ? "Tu plan de aprendizaje DevOps"
+                : "Your DevOps learning plan"}
             </h1>
             <p className="mt-4 max-w-3xl leading-8 text-devops-muted">
-              A structured report generated from repository metadata, file tree signals, and
-              deterministic DevOps rules. The checklist, learning path, and labs are generated
-              from the real analyzer evidence.
+              {report.input.language === "es"
+                ? "Empieza con una mision guiada o explora el informe tecnico completo. Las recomendaciones se basan en senales visibles del repositorio y explican cuando una conclusion es solo una inferencia."
+                : "Start with a guided mission or explore the full technical report. Recommendations are based on visible repository signals and explain when a conclusion is only an inference."}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -94,151 +98,162 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
           </div>
         </div>
 
-        <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:items-start">
-          <aside className="min-w-0 lg:sticky lg:top-24">
-            <nav
-              className="hidden rounded-lg border border-devops-border bg-slate-950/55 p-3 lg:block"
-              aria-label="Report sections"
-            >
-              <p className="px-3 pb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-devops-muted">
-                Report sections
-              </p>
-              <div className="space-y-1">
-                {quickLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    className="flex min-h-10 items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-devops-muted transition hover:bg-devops-bg/80 hover:text-devops-text focus:outline-none focus:ring-2 focus:ring-devops-blue/60"
-                  >
-                    <span>{link.label}</span>
-                    <span className="max-w-20 truncate font-mono text-[11px] text-devops-blue">
-                      {link.meta}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </nav>
-            <nav
-              className="flex max-w-full gap-2 overflow-x-auto pb-2 lg:hidden"
-              aria-label="Report sections"
-            >
-              {quickLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="shrink-0 rounded-full border border-devops-border bg-slate-950/55 px-3 py-2 text-sm text-devops-muted transition hover:border-devops-blue/60 hover:text-devops-text focus:outline-none focus:ring-2 focus:ring-devops-blue/60"
+        <ReportModeSwitcher
+          level={report.input.level}
+          language={report.input.language}
+          guided={
+            <BeginnerJourney
+              reportId={report.id}
+              repositoryUrl={report.repository.url}
+              language={report.input.language}
+              missions={guidedMissions}
+              concepts={concepts}
+            />
+          }
+          technical={
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:items-start">
+              <aside className="min-w-0 lg:sticky lg:top-24">
+                <nav
+                  className="hidden rounded-lg border border-devops-border bg-slate-950/55 p-3 lg:block"
+                  aria-label="Report sections"
                 >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </aside>
-
-          <div className="min-w-0">
-            <div
-              id="score"
-              className="grid min-w-0 grid-cols-[minmax(0,1fr)] scroll-mt-24 gap-6 lg:grid-cols-[0.9fr_1.1fr]"
-            >
-              <RepoOverviewCard
-                repository={report.repository.fullName}
-                url={report.repository.url}
-                stack={report.detectedStack}
-                metadata={{
-                  defaultBranch: report.repository.defaultBranch,
-                  stars: report.repository.stars,
-                  forks: report.repository.forks,
-                  pushedAt: report.repository.pushedAt,
-                  analyzedItems: treeStats?.analyzedItems
-                }}
-              />
-              <ScoreCard
-                score={report.score.total}
-                maxScore={report.score.maxScore}
-                percentage={scorePercentage}
-                maturity={report.score.maturityLevel}
-              />
-            </div>
-
-            <div id="actions" className="mt-6 scroll-mt-24">
-              <ScoreInsights
-                strengths={scoreStrengths}
-                weaknesses={scoreWeaknesses}
-                nextBestActions={nextBestActions}
-              />
-            </div>
-
-            <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-              <CategoryScoreBars categories={categories} />
-              <TerminalCommandBlock title="report.contract" lines={terminalLines} />
-            </div>
-
-            <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
-              <ChecklistSection title="Detected strengths" items={strengths} tone="present" />
-              <ChecklistSection title="Risks and missing practices" items={gaps} tone="missing" />
-            </div>
-
-            <div id="learn" className="mt-6 scroll-mt-24">
-              <BeginnerJourney
-                reportId={report.id}
-                modules={learningModules}
-                concepts={concepts}
-                labs={labs}
-                checklist={productionChecklist}
-              />
-            </div>
-
-            <div id="concepts" className="mt-6 scroll-mt-24">
-              <ConceptGlossary concepts={concepts} />
-            </div>
-
-            <div id="checklist" className="mt-6 scroll-mt-24">
-              <ProductionChecklist items={productionChecklist} />
-            </div>
-
-            <div id="path" className="mt-6 scroll-mt-24">
-              <LearningPathTimeline steps={learningPath} />
-            </div>
-
-            <div id="labs" className="mt-6 scroll-mt-24">
-              <LabsSection labs={labs} />
-            </div>
-
-            <div id="mentor" className="mt-6 scroll-mt-24">
-              <AiMentorPanel ai={report.ai} />
-            </div>
-
-            <div id="evidence" className="mt-6 scroll-mt-24">
-              <ScoringEvidence categories={categories} />
-            </div>
-
-            <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <RepositorySignals signals={signals} />
-              <ImportantFiles files={importantFiles} />
-            </div>
-
-            <div
-              id="export"
-              className="mt-6 scroll-mt-24 rounded-lg border border-devops-border bg-devops-surface/70 p-6"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">Export Markdown</h2>
-                  <p className="mt-2 text-sm leading-6 text-devops-muted">
-                    Save the report as a Markdown artifact for portfolio notes, issue planning, or
-                    pull request context.
+                  <p className="px-3 pb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-devops-muted">
+                    Report sections
                   </p>
+                  <div className="space-y-1">
+                    {quickLinks.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="flex min-h-10 items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-devops-muted transition hover:bg-devops-bg/80 hover:text-devops-text focus:outline-none focus:ring-2 focus:ring-devops-blue/60"
+                      >
+                        <span>{link.label}</span>
+                        <span className="max-w-20 truncate font-mono text-[11px] text-devops-blue">
+                          {link.meta}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </nav>
+                <nav
+                  className="flex max-w-full gap-2 overflow-x-auto pb-2 lg:hidden"
+                  aria-label="Report sections"
+                >
+                  {quickLinks.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      className="shrink-0 rounded-full border border-devops-border bg-slate-950/55 px-3 py-2 text-sm text-devops-muted transition hover:border-devops-blue/60 hover:text-devops-text focus:outline-none focus:ring-2 focus:ring-devops-blue/60"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </aside>
+
+              <div className="min-w-0">
+                <div
+                  id="score"
+                  className="grid min-w-0 grid-cols-[minmax(0,1fr)] scroll-mt-24 gap-6 lg:grid-cols-[0.9fr_1.1fr]"
+                >
+                  <RepoOverviewCard
+                    repository={report.repository.fullName}
+                    url={report.repository.url}
+                    stack={report.detectedStack}
+                    metadata={{
+                      defaultBranch: report.repository.defaultBranch,
+                      stars: report.repository.stars,
+                      forks: report.repository.forks,
+                      pushedAt: report.repository.pushedAt,
+                      analyzedItems: treeStats?.analyzedItems
+                    }}
+                  />
+                  <ScoreCard
+                    score={report.score.total}
+                    maxScore={report.score.maxScore}
+                    percentage={scorePercentage}
+                    maturity={report.score.maturityLevel}
+                  />
                 </div>
-                <ExportMarkdownButton reportId={report.id} report={report} />
+
+                <div id="actions" className="mt-6 scroll-mt-24">
+                  <ScoreInsights
+                    strengths={scoreStrengths}
+                    weaknesses={scoreWeaknesses}
+                    nextBestActions={nextBestActions}
+                  />
+                </div>
+
+                <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+                  <CategoryScoreBars categories={categories} />
+                  <TerminalCommandBlock title="report.contract" lines={terminalLines} />
+                </div>
+
+                <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
+                  <ChecklistSection title="Detected strengths" items={strengths} tone="present" />
+                  <ChecklistSection
+                    title="Risks and missing practices"
+                    items={gaps}
+                    tone="missing"
+                  />
+                </div>
+
+                <div id="concepts" className="mt-6 scroll-mt-24">
+                  <ConceptGlossary concepts={concepts} />
+                </div>
+
+                <div id="checklist" className="mt-6 scroll-mt-24">
+                  <ProductionChecklist items={productionChecklist} />
+                </div>
+
+                <div id="path" className="mt-6 scroll-mt-24">
+                  <LearningPathTimeline steps={learningPath} />
+                </div>
+
+                <div id="labs" className="mt-6 scroll-mt-24">
+                  <LabsSection labs={labs} />
+                </div>
+
+                <div id="mentor" className="mt-6 scroll-mt-24">
+                  <AiMentorPanel ai={report.ai} />
+                </div>
+
+                <div id="evidence" className="mt-6 scroll-mt-24">
+                  <ScoringEvidence categories={categories} />
+                </div>
+
+                <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                  <RepositorySignals signals={signals} />
+                  <ImportantFiles files={importantFiles} />
+                </div>
+
+                <div
+                  id="export"
+                  className="mt-6 scroll-mt-24 rounded-lg border border-devops-border bg-devops-surface/70 p-6"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h2 className="text-xl font-semibold text-white">Export Markdown</h2>
+                      <p className="mt-2 text-sm leading-6 text-devops-muted">
+                        Save the report as a Markdown artifact for portfolio notes, issue planning,
+                        or pull request context.
+                      </p>
+                    </div>
+                    <ExportMarkdownButton reportId={report.id} report={report} />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          }
+        />
       </div>
     </section>
   );
 }
 
-function normalizeCategories(categories: DevOpsReport["score"]["categories"]): DevOpsCategoryScore[] {
+function normalizeCategories(
+  categories: DevOpsReport["score"]["categories"]
+): DevOpsCategoryScore[] {
   return categories.map((category) => ({
     ...category,
     percentage:

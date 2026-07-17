@@ -8,5 +8,7 @@ export { generateLearningPath } from "./learning-path.js";
 export type { GenerateLearningPathInput } from "./learning-path.js";
 export { generateLearningModules } from "./modules.js";
 export type { GenerateLearningModulesInput } from "./modules.js";
+export { generateGuidedLearningMissions } from "./missions.js";
+export type { GenerateGuidedLearningMissionsInput } from "./missions.js";
 export { generateRecommendedNextSteps } from "./recommendations.js";
 export type { GenerateRecommendedNextStepsInput } from "./recommendations.js";

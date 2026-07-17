@@ -60,7 +60,7 @@ Optional mentor modes:
 - `portfolio`
 - `open-source`
 
-`mentorMode` only affects the optional `ai` explanation tone. It does not change analyzer facts, score, checklist, concepts, learning modules, learning path, or labs.
+`mentorMode` only affects the optional `ai` explanation tone. It does not change analyzer facts, score, checklist, concepts, guided missions, learning modules, learning path, or labs.
 
 The endpoint uses:
 
@@ -71,7 +71,7 @@ GET https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
 
 `GITHUB_TOKEN` is optional and only increases rate limits. Private repositories are not supported in this phase.
 
-The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, initial findings, a rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, guided learning modules, learning path, hands-on labs, recommended next steps, and an optional `ai` mentor section.
+The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, initial findings, a rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, recommended next steps, and an optional `ai` mentor section.
 
 Response highlights:
 
@@ -81,6 +81,7 @@ Response highlights:
   "score": {},
   "productionChecklist": [],
   "concepts": [],
+  "guidedMissions": [],
   "learningModules": [],
   "learningPath": [],
   "labs": [],
@@ -147,5 +148,5 @@ Errors use a consistent JSON shape:
 - No authentication.
 - No private repository analysis.
 - Score is rule-based, but it does not inspect deep file contents yet.
-- Checklist, concept, learning module, learning path, lab, and next-step generation are rule-based and do not depend on AI.
+- Checklist, concept, guided mission, learning module, learning path, lab, and next-step generation are rule-based and do not depend on AI.
 - AI mentor output is optional and does not change deterministic analyzer/scoring/learning output.

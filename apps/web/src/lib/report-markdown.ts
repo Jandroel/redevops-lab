@@ -4,6 +4,7 @@ import type {
   DevOpsLab,
   DevOpsLearningModule,
   DevOpsReport,
+  GuidedLearningMission,
   LearningPathStep,
   ProductionChecklistItem,
   ReportLanguage
@@ -21,6 +22,7 @@ export function createReportMarkdown(report: DevOpsReport): string {
   const learningPathSteps = report.learningPath ?? [];
   const handsOnLabs = report.labs ?? [];
   const learningModules = report.learningModules ?? [];
+  const guidedMissions = report.guidedMissions ?? [];
   const concepts = report.concepts ?? [];
   const importantFiles = report.analysis?.importantFiles.length
     ? report.analysis.importantFiles.map((file) => `- ${file}`).join("\n")
@@ -33,7 +35,9 @@ export function createReportMarkdown(report: DevOpsReport): string {
         )
         .join("\n")
     : `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
-  const categoryLines = categories.map((category) => formatCategory(category, language)).join("\n\n");
+  const categoryLines = categories
+    .map((category) => formatCategory(category, language))
+    .join("\n\n");
   const strengths =
     strengthsList.map((item) => `- ${item}`).join("\n") ||
     `- ${label(language, "Aun no se detectaron.", "None detected yet.")}`;
@@ -48,6 +52,7 @@ export function createReportMarkdown(report: DevOpsReport): string {
     .join("\n");
   const checklist = formatProductionChecklist(productionChecklist, language);
   const modules = formatLearningModules(learningModules, language);
+  const missions = formatGuidedMissions(guidedMissions, language);
   const glossary = formatConcepts(concepts, language);
   const learningPath = formatLearningPath(learningPathSteps, language);
   const labs = formatLabs(handsOnLabs, language);
@@ -115,6 +120,10 @@ ${aiMentor}
 
 ${checklist}
 
+## ${label(language, "Misiones guiadas", "Guided Missions")}
+
+${missions}
+
 ## ${label(language, "Ruta guiada para principiantes", "Beginner Learning Journey")}
 
 ${modules}
@@ -133,15 +142,65 @@ ${labs}
 `;
 }
 
-function formatCategory(category: DevOpsReport["score"]["categories"][number], language: ReportLanguage): string {
+function formatGuidedMissions(missions: GuidedLearningMission[], language: ReportLanguage): string {
+  if (!missions.length) {
+    return `- ${label(language, "No hay misiones guiadas disponibles.", "No guided missions available.")}`;
+  }
+
+  return missions
+    .map(
+      (mission) => `### ${mission.order}. ${mission.title}
+
+${mission.plainLanguageGoal}
+
+${label(language, "Por que ahora", "Why now")}: ${mission.whyNow}
+
+${label(language, "Nivel de evidencia", "Evidence level")}: ${mission.evidenceLevel}
+
+${mission.evidenceReason}
+
+${label(language, "Evidencia", "Evidence")}:
+${mission.evidence
+  .map(
+    (item) =>
+      `- **${item.label}** (${item.level}): ${item.detail}${item.files.length ? ` - ${item.files.join(", ")}` : ""}`
+  )
+  .join("\n")}
+
+${label(language, "Pasos", "Steps")}:
+${mission.steps.map((step, index) => `${index + 1}. **${step.title}**: ${step.instruction}`).join("\n")}
+
+${label(language, "Comandos", "Commands")}:
+${formatCodeList(mission.commands)}
+
+${label(language, "Criterios de cierre", "Completion criteria")}:
+${formatBulletList(mission.completionCriteria)}
+
+${label(language, "Comprueba lo aprendido", "Knowledge check")}: ${mission.knowledgeCheck.question}
+
+${mission.knowledgeCheck.explanation}`
+    )
+    .join("\n\n");
+}
+
+function formatCategory(
+  category: DevOpsReport["score"]["categories"][number],
+  language: ReportLanguage
+): string {
   const rules = category.rules ?? [];
   const passed = rules
     .filter((rule) => rule.passed)
-    .map((rule) => `- ${rule.title} (+${rule.points}/${rule.maxPoints})${formatEvidence(rule.evidence)}`)
+    .map(
+      (rule) =>
+        `- ${rule.title} (+${rule.points}/${rule.maxPoints})${formatEvidence(rule.evidence)}`
+    )
     .join("\n");
   const missing = rules
     .filter((rule) => !rule.passed)
-    .map((rule) => `- ${rule.title} (+0/${rule.maxPoints}) - ${rule.recommendation ?? label(language, "Sin recomendacion.", "No recommendation.")}`)
+    .map(
+      (rule) =>
+        `- ${rule.title} (+0/${rule.maxPoints}) - ${rule.recommendation ?? label(language, "Sin recomendacion.", "No recommendation.")}`
+    )
     .join("\n");
 
   return `### ${category.name} - ${category.score}/${category.maxScore} (${category.percentage}%)
@@ -155,7 +214,10 @@ ${label(language, "Sin senal detectada:", "Missing:")}
 ${missing || "- None"}`;
 }
 
-function formatProductionChecklist(items: ProductionChecklistItem[], language: ReportLanguage): string {
+function formatProductionChecklist(
+  items: ProductionChecklistItem[],
+  language: ReportLanguage
+): string {
   if (!items.length) {
     return `- ${label(language, "No hay checklist disponible.", "No checklist available.")}`;
   }
@@ -228,7 +290,9 @@ function formatLearningPath(steps: LearningPathStep[], language: ReportLanguage)
 
   return steps
     .map(
-      (step) => `${step.order}. **${step.title}** (${step.status ?? "recommended"}, ${step.difficulty ?? "beginner"})
+      (
+        step
+      ) => `${step.order}. **${step.title}** (${step.status ?? "recommended"}, ${step.difficulty ?? "beginner"})
 ${step.description}
 ${label(language, "Temas", "Topics")}: ${(step.topics ?? []).join(", ")}
 ${label(language, "Archivos relacionados", "Related files")}: ${(step.relatedFiles ?? []).join(", ") || "n/a"}

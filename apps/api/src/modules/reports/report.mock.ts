@@ -1,6 +1,7 @@
 import { parseGitHubUrl } from "@redevops-lab/analyzer";
 import {
   generateDevOpsConcepts,
+  generateGuidedLearningMissions,
   generateHandsOnLabs,
   generateLearningPath,
   generateLearningModules,
@@ -128,7 +129,8 @@ const findings: DevOpsFinding[] = [
   {
     type: "missing",
     title: "Production Docker setup",
-    description: "The project has local service orchestration, but production images are not defined yet.",
+    description:
+      "The project has local service orchestration, but production images are not defined yet.",
     severity: "medium"
   },
   {
@@ -146,7 +148,8 @@ const findings: DevOpsFinding[] = [
   {
     type: "recommendation",
     title: "Add security scanning and observability depth",
-    description: "The next valuable step is dependency scanning plus richer logs, metrics, or tracing.",
+    description:
+      "The next valuable step is dependency scanning plus richer logs, metrics, or tracing.",
     severity: "medium"
   }
 ];
@@ -224,6 +227,7 @@ export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
     labs: learning.labs,
     concepts: learning.concepts,
     learningModules: learning.learningModules,
+    guidedMissions: learning.guidedMissions,
     analysis,
     generatedAt
   };
@@ -252,6 +256,7 @@ export function createAnalyzedDevOpsReport(
     labs: learning.labs,
     concepts: learning.concepts,
     learningModules: learning.learningModules,
+    guidedMissions: learning.guidedMissions,
     analysis,
     generatedAt: analysis.generatedAt
   };
@@ -271,6 +276,7 @@ function createLearningSections(
   labs: DevOpsReport["labs"];
   concepts: NonNullable<DevOpsReport["concepts"]>;
   learningModules: NonNullable<DevOpsReport["learningModules"]>;
+  guidedMissions: NonNullable<DevOpsReport["guidedMissions"]>;
 } {
   const score = calculateDevOpsScore(analysis);
   const productionChecklist = generateProductionChecklist({
@@ -310,6 +316,15 @@ function createLearningSections(
     level: input.level,
     language: input.language
   });
+  const guidedMissions = generateGuidedLearningMissions({
+    analysis,
+    checklist: productionChecklist,
+    modules: learningModules,
+    labs,
+    concepts,
+    level: input.level,
+    language: input.language
+  });
   const nextBestActions = generateRecommendedNextSteps({
     score,
     checklist: productionChecklist,
@@ -327,6 +342,7 @@ function createLearningSections(
     learningPath,
     labs,
     concepts,
-    learningModules
+    learningModules,
+    guidedMissions
   };
 }

@@ -14,12 +14,13 @@ The project is in active development. The current implementation covers the foun
 - Basic stack detection from repository files
 - DevOps signal detection for Docker, CI/CD, security, docs, observability, and infrastructure
 - Personalized learning path generated from score gaps and repository signals
+- Guided DevOps missions prioritized from repository gaps, with plain-language goals, evidence confidence, small steps, knowledge checks, and completion criteria
 - Beginner learning modules that connect concepts, labs, checklist evidence, and outcomes
 - Practical concept glossary generated from the report context
 - Hands-on lab cards with objectives, prerequisites, commands, steps, validation, mistakes, completion criteria, difficulty, estimated time, and suggested files
-- Local interactive progress for learning modules in the report dashboard
+- Local interactive progress for guided missions, steps, and knowledge checks in the report dashboard
 - Optional DevOps AI Mentor layer with mock and OpenAI-compatible providers
-- Product-grade report dashboard with score, evidence, checklist, learning path, labs, mentor notes, and Markdown export
+- Guided and technical report modes so beginners can focus on one mission without losing the full score, evidence, checklist, path, labs, and Markdown export
 - Analyzer UX with validation, example repositories, loading progress, and actionable error states
 - Markdown export with checklist, beginner modules, glossary, learning path, labs, and scoring evidence
 - Basic Spanish and English report content for educational sections
@@ -92,7 +93,7 @@ GET  /api/reports/:id/export
 GET  /api/docs
 ```
 
-`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, guided learning modules, learning path, hands-on labs, and recommended next steps.
+`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, and recommended next steps.
 
 ## Environment
 
@@ -124,7 +125,7 @@ AI_TIMEOUT_MS=20000
 
 ## Project Status
 
-ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, concepts, learning modules, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, concepts, learning modules, learning path, or labs. There is no database, login, private repository support, or real deployment automation yet.
+ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, concepts, guided missions, learning modules, learning path, and labs are deterministic and evidence-based. Guided missions explicitly label conclusions as confirmed, inferred, or requiring manual review. The AI mentor layer is optional and may explain or prioritize the report, but it does not change deterministic output. There is no database, login, private repository support, or real deployment automation yet.
 
 ## Roadmap
 
@@ -135,7 +136,7 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 5. Rule-based learning path, hands-on labs, production checklist, and bilingual educational output
 6. Optional AI mentor explanations grounded in analyzer output
 7. UI/UX polish, report dashboard organization, examples, loading/error/empty states, and deploy readiness notes
-8. Beginner learning journey, glossary, richer labs, and educational docs
+8. Beginner learning journey, glossary, richer labs, educational docs, and interactive guided mission mode
 9. Persisted reports and export polish
 10. PostgreSQL persistence
 11. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
@@ -153,8 +154,9 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 - AI mentor is optional, disabled by default, and does not replace deterministic analysis
 - No private repository analysis yet
 - Score is deterministic and rule-based, but still limited to repository structure and file-name evidence
-- Concept, module, learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
-- Learning progress is stored locally in the browser and is not synced because there is no database yet
+- Concept, mission, module, learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
+- Mission evidence distinguishes visible confirmation from inference, but it is still not a formal DevOps, security, or production audit
+- Learning progress, completed steps, and knowledge-check answers are stored locally in the browser and are not synced because there is no database yet
 
 ## Author
 

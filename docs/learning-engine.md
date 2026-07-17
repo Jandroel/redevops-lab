@@ -2,13 +2,14 @@
 
 `packages/learning` turns repository analysis and scoring evidence into educational output. It is deterministic and rule-based; it does not call AI, use a database, clone repositories, create GitHub issues, or write to repositories.
 
-The current engine generates five connected layers:
+The current engine generates six connected layers:
 
 1. Production-ready checklist
 2. Ordered learning path
 3. Hands-on labs
 4. Beginner concepts and glossary terms
 5. Guided learning modules that connect concepts, labs, checklist evidence, and outcomes
+6. Prioritized guided missions with evidence confidence, small steps, and knowledge checks
 
 ## Inputs
 
@@ -108,6 +109,23 @@ Each module includes:
 
 The frontend uses these modules for the interactive learning journey. Progress is stored locally in the browser because ReDevOps Lab has no database yet.
 
+## Guided Missions
+
+`generateGuidedLearningMissions` ranks actionable modules from checklist status and priority, then selects up to four missions for a beginner report. Intermediate and advanced reports may include one or two additional missions.
+
+Each mission includes:
+
+- a plain-language goal and repository-specific reason for learning it now
+- an evidence level: `confirmed`, `inferred`, or `needs-review`
+- the checklist evidence and visible files behind that conclusion
+- prerequisites, suggested files, commands, and small practice steps
+- expected outcome and completion criteria
+- a short deterministic knowledge check with explanatory feedback
+
+`inferred` is used when a visible signal was not found. This wording is intentional: a missing path does not prove that a practice is absent. `needs-review` is used when the repository tree is partial, analyzer warnings exist, or file structure alone cannot support a reliable conclusion.
+
+The frontend stores completed missions, checked steps, and knowledge-check answers in local browser storage. It does not claim that a repository change was executed or verified automatically.
+
 ## Language
 
 The engine includes a small `localization.ts` helper for Spanish and English strings. Technical names such as Docker, CI/CD, Terraform, Kubernetes, Prometheus, and GitHub Actions stay in English.
@@ -121,5 +139,5 @@ This is intentionally not a full i18n framework yet.
 - Security and observability checks are signals, not audits.
 - Private repositories are not supported.
 - There is no persistence.
-- Learning module progress is local-only in the browser.
+- Guided mission progress and learning module progress are local-only in the browser.
 - The optional AI mentor layer lives outside this package and may explain the report, but it does not change learning engine output.

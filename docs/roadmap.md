@@ -64,10 +64,14 @@
 ## Phase 8 - Beginner Learning Experience
 
 - Beginner learning journey generated from report evidence
+- Guided mode with one prioritized mission at a time
+- Technical report mode for full diagnostic detail
+- Evidence confidence labels: confirmed, inferred, and manual review
+- Interactive practice steps, deterministic knowledge checks, completion feedback, and re-analysis loop
 - Practical glossary tied to the repository's current gaps and labs
 - Richer hands-on labs with prerequisites, commands, expected outcomes, common mistakes, completion criteria, and verification checklist
-- Local module progress in the report dashboard
-- Markdown export updated with learning modules and glossary terms
+- Local mission, step, knowledge-check, and module progress in the report dashboard
+- Markdown export updated with guided missions, evidence confidence, learning modules, and glossary terms
 - Beginner docs under `docs/learn/`
 
 ## Phase 9 - Persistence and Report Lifecycle

@@ -53,8 +53,22 @@ export const demoReport: DevOpsReport = {
         percentage: 25,
         summary: "Containerization needs attention based on Docker signals.",
         rules: [
-          createRule("containerization.dockerfile", "containerization", "Dockerfile detected", 0, 8, []),
-          createRule("containerization.compose", "containerization", "Docker Compose detected", 5, 5, ["docker-compose.yml"])
+          createRule(
+            "containerization.dockerfile",
+            "containerization",
+            "Dockerfile detected",
+            0,
+            8,
+            []
+          ),
+          createRule(
+            "containerization.compose",
+            "containerization",
+            "Docker Compose detected",
+            5,
+            5,
+            ["docker-compose.yml"]
+          )
         ]
       },
       {
@@ -65,7 +79,9 @@ export const demoReport: DevOpsReport = {
         percentage: 85,
         summary: "CI/CD is strong based on workflow naming signals.",
         rules: [
-          createRule("ci_cd.pipeline", "ci_cd", "CI/CD pipeline detected", 10, 10, [".github/workflows/ci.yml"]),
+          createRule("ci_cd.pipeline", "ci_cd", "CI/CD pipeline detected", 10, 10, [
+            ".github/workflows/ci.yml"
+          ]),
           createRule("ci_cd.deploy", "ci_cd", "Deploy or release workflow probable", 0, 3, [])
         ]
       },
@@ -77,14 +93,38 @@ export const demoReport: DevOpsReport = {
         percentage: 60,
         summary: "Configuration readiness is developing based on environment examples and docs.",
         rules: [
-          createRule("configuration.env_example", "configuration", "Environment example detected", 6, 6, [
-            ".env.example"
-          ]),
-          createRule("configuration.docs", "configuration", "Configuration documentation inferred", 3, 3, [
-            "README.md"
-          ]),
-          createRule("configuration.config_directory", "configuration", "Configuration directory detected", 0, 3, []),
-          createRule("configuration.environments", "configuration", "Environment separation inferred", 0, 3, [])
+          createRule(
+            "configuration.env_example",
+            "configuration",
+            "Environment example detected",
+            6,
+            6,
+            [".env.example"]
+          ),
+          createRule(
+            "configuration.docs",
+            "configuration",
+            "Configuration documentation inferred",
+            3,
+            3,
+            ["README.md"]
+          ),
+          createRule(
+            "configuration.config_directory",
+            "configuration",
+            "Configuration directory detected",
+            0,
+            3,
+            []
+          ),
+          createRule(
+            "configuration.environments",
+            "configuration",
+            "Environment separation inferred",
+            0,
+            3,
+            []
+          )
         ]
       },
       {
@@ -107,9 +147,14 @@ export const demoReport: DevOpsReport = {
         percentage: 30,
         summary: "Observability needs attention based on health-only signals.",
         rules: [
-          createRule("observability.health", "observability", "Health check signal detected", 3, 3, [
-            "apps/api/src/modules/health/health.controller.ts"
-          ])
+          createRule(
+            "observability.health",
+            "observability",
+            "Health check signal detected",
+            3,
+            3,
+            ["apps/api/src/modules/health/health.controller.ts"]
+          )
         ]
       },
       {
@@ -120,14 +165,28 @@ export const demoReport: DevOpsReport = {
         percentage: 80,
         summary: "Documentation is strong based on README, docs, deployment, and license files.",
         rules: [
-          createRule("documentation.readme", "documentation", "README detected", 3, 3, ["README.md"]),
+          createRule("documentation.readme", "documentation", "README detected", 3, 3, [
+            "README.md"
+          ]),
           createRule("documentation.docs", "documentation", "Docs directory detected", 2, 2, [
             "docs/deployment.md"
           ]),
-          createRule("documentation.deployment", "documentation", "Deployment documentation detected", 2, 2, [
-            "docs/deployment.md"
-          ]),
-          createRule("documentation.contributing", "documentation", "Contributing guide detected", 0, 1, []),
+          createRule(
+            "documentation.deployment",
+            "documentation",
+            "Deployment documentation detected",
+            2,
+            2,
+            ["docs/deployment.md"]
+          ),
+          createRule(
+            "documentation.contributing",
+            "documentation",
+            "Contributing guide detected",
+            0,
+            1,
+            []
+          ),
           createRule("documentation.changelog", "documentation", "Changelog detected", 0, 1, []),
           createRule("documentation.license", "documentation", "License detected", 1, 1, ["MIT"])
         ]
@@ -138,18 +197,42 @@ export const demoReport: DevOpsReport = {
         score: 1,
         maxScore: 10,
         percentage: 10,
-        summary: "Infrastructure readiness needs attention based on missing IaC and orchestration signals.",
+        summary:
+          "Infrastructure readiness needs attention based on missing IaC and orchestration signals.",
         rules: [
-          createRule("infrastructure.iac", "infrastructure", "Infrastructure as Code detected", 0, 4, []),
-          createRule("infrastructure.kubernetes", "infrastructure", "Kubernetes manifests detected", 0, 3, []),
+          createRule(
+            "infrastructure.iac",
+            "infrastructure",
+            "Infrastructure as Code detected",
+            0,
+            4,
+            []
+          ),
+          createRule(
+            "infrastructure.kubernetes",
+            "infrastructure",
+            "Kubernetes manifests detected",
+            0,
+            3,
+            []
+          ),
           createRule("infrastructure.helm", "infrastructure", "Helm chart detected", 0, 2, []),
-          createRule("infrastructure.deployment_config", "infrastructure", "Deployment or infra config detected", 1, 1, [
-            "docs/deployment.md"
-          ])
+          createRule(
+            "infrastructure.deployment_config",
+            "infrastructure",
+            "Deployment or infra config detected",
+            1,
+            1,
+            ["docs/deployment.md"]
+          )
         ]
       }
     ],
-    strengths: ["CI/CD pipeline detected (+10)", "Environment example detected (+6)", "README detected (+3)"],
+    strengths: [
+      "CI/CD pipeline detected (+10)",
+      "Environment example detected (+6)",
+      "README detected (+3)"
+    ],
     weaknesses: [
       "Containerization is below 50% (5/20).",
       "Security is below 50% (0/15).",
@@ -171,13 +254,15 @@ export const demoReport: DevOpsReport = {
     {
       type: "strength",
       title: "Monorepo structure",
-      description: "The repository separates web, API, and reusable packages into clear workspaces.",
+      description:
+        "The repository separates web, API, and reusable packages into clear workspaces.",
       severity: "low"
     },
     {
       type: "missing",
       title: "Production Docker setup",
-      description: "The project has local service orchestration, but production images are not defined yet.",
+      description:
+        "The project has local service orchestration, but production images are not defined yet.",
       severity: "medium"
     },
     {
@@ -273,8 +358,7 @@ export const demoReport: DevOpsReport = {
       term: "Health check",
       category: "observability",
       shortDefinition: "Endpoint o comando que indica si un servicio esta vivo.",
-      beginnerExplanation:
-        "Es la senal minima para saber si la app arranco y puede responder.",
+      beginnerExplanation: "Es la senal minima para saber si la app arranco y puede responder.",
       whyItMatters: "Permite verificar despliegues y monitoreo inicial.",
       example: "GET /api/health",
       relatedTerms: ["structured-logging", "metrics"]
@@ -321,6 +405,7 @@ export const demoReport: DevOpsReport = {
       outcome: "Puedes definir que observar primero despues de un despliegue."
     }
   ],
+  guidedMissions: createFallbackGuidedMissions(),
   learningPath: [
     {
       id: "path-runtime-configuration",
@@ -348,7 +433,8 @@ export const demoReport: DevOpsReport = {
       id: "path-security-baseline",
       order: 3,
       title: "Agrega seguridad basica de supply chain",
-      description: "Introduce senales visibles para actualizaciones, escaneo y politica de seguridad.",
+      description:
+        "Introduce senales visibles para actualizaciones, escaneo y politica de seguridad.",
       topics: ["Seguridad", "supply chain", "dependency scanning"],
       relatedFiles: [".github/dependabot.yml", ".github/workflows/security.yml"],
       labs: ["lab-security-scanning"],
@@ -359,7 +445,8 @@ export const demoReport: DevOpsReport = {
       id: "path-operational-visibility",
       order: 4,
       title: "Agrega health checks y visibilidad operativa",
-      description: "Haz que el estado del servicio sea visible para despliegues y monitoreo inicial.",
+      description:
+        "Haz que el estado del servicio sea visible para despliegues y monitoreo inicial.",
       topics: ["Observabilidad", "health checks", "logging"],
       relatedFiles: ["apps/api/src/modules/health/health.controller.ts", "docs/observability.md"],
       labs: ["lab-observability"],
@@ -391,7 +478,8 @@ export const demoReport: DevOpsReport = {
         "Crea .env.example con nombres y valores falsos.",
         "Verifica que ningun secreto real quede escrito."
       ],
-      validation: "Un nuevo desarrollador puede configurar el proyecto usando README y .env.example.",
+      validation:
+        "Un nuevo desarrollador puede configurar el proyecto usando README y .env.example.",
       estimatedTime: "20-30 min",
       category: "configuration"
     },
@@ -400,14 +488,16 @@ export const demoReport: DevOpsReport = {
       title: "Conteneriza la aplicacion con Docker",
       difficulty: "beginner",
       objective: "Crear una ruta reproducible para construir una imagen de la aplicacion.",
-      whyItMatters: "Docker hace que desarrollo, CI y despliegue compartan una base mas consistente.",
+      whyItMatters:
+        "Docker hace que desarrollo, CI y despliegue compartan una base mas consistente.",
       suggestedFiles: ["Dockerfile (suggested)", ".dockerignore (suggested)", "package.json"],
       steps: [
         "Identifica el comando de build o arranque del stack detectado.",
         "Crea un Dockerfile minimo para instalar dependencias y arrancar la app.",
         "Agrega .dockerignore para excluir dependencias, builds locales y secretos."
       ],
-      validation: "La imagen se puede construir localmente y la documentacion explica como ejecutarla.",
+      validation:
+        "La imagen se puede construir localmente y la documentacion explica como ejecutarla.",
       estimatedTime: "30-45 min",
       category: "containerization"
     },
@@ -417,13 +507,17 @@ export const demoReport: DevOpsReport = {
       difficulty: "intermediate",
       objective: "Detectar riesgos de dependencias, codigo o secretos antes del despliegue.",
       whyItMatters: "El escaneo temprano reduce riesgo de supply chain y errores repetidos.",
-      suggestedFiles: [".github/dependabot.yml (suggested)", ".github/workflows/security.yml (suggested)"],
+      suggestedFiles: [
+        ".github/dependabot.yml (suggested)",
+        ".github/workflows/security.yml (suggested)"
+      ],
       steps: [
         "Agrega Dependabot para el ecosistema principal del repositorio.",
         "Evalua CodeQL, Semgrep, Trivy o Gitleaks segun el stack.",
         "Documenta como revisar hallazgos de seguridad."
       ],
-      validation: "Los resultados de seguridad quedan visibles en pull requests o en la pestana Security.",
+      validation:
+        "Los resultados de seguridad quedan visibles en pull requests o en la pestana Security.",
       estimatedTime: "40-60 min",
       category: "security"
     },
@@ -594,3 +688,189 @@ export const demoReport: DevOpsReport = {
   },
   generatedAt
 };
+
+function createFallbackGuidedMissions(): NonNullable<DevOpsReport["guidedMissions"]> {
+  return [
+    createFallbackMission({
+      id: "mission-containers",
+      order: 1,
+      title: "Contenedores reproducibles",
+      category: "containerization",
+      summary:
+        "El repositorio coordina servicios con Compose, pero no muestra una receta de imagen para la aplicacion.",
+      goal: "Entender la diferencia entre Dockerfile, imagen y Compose creando una primera imagen reproducible.",
+      whyNow:
+        "No se detecto un Dockerfile visible. Esta es una inferencia basada en el arbol de archivos, no una auditoria definitiva.",
+      evidenceLabel: "Dockerfile detectado",
+      evidenceDetail: "No se encontro una ruta visible para construir una imagen de contenedor.",
+      conceptIds: ["dockerfile"],
+      labId: "lab-dockerfile",
+      suggestedFiles: ["Dockerfile", ".dockerignore", "package.json"],
+      commands: ["docker build -t redevops-lab .", "docker run --rm redevops-lab"],
+      steps: [
+        "Identifica el comando de build y arranque del proyecto.",
+        "Crea un Dockerfile minimo que instale dependencias y arranque la aplicacion.",
+        "Agrega .dockerignore y construye la imagen localmente."
+      ],
+      expectedOutcome: "Puedes construir una imagen y explicar que contiene.",
+      completionCriteria: [
+        "La imagen se construye sin secretos locales.",
+        "El comando de arranque esta documentado."
+      ],
+      question: "Que describe principalmente un Dockerfile?",
+      answers: [
+        ["Como construir una imagen reproducible", true],
+        ["Que contenedores estan ejecutandose ahora", false],
+        ["La lista de usuarios de GitHub", false]
+      ],
+      explanation:
+        "El Dockerfile es la receta de construccion; Compose coordina servicios en ejecucion."
+    }),
+    createFallbackMission({
+      id: "mission-security",
+      order: 2,
+      title: "Seguridad inicial",
+      category: "security",
+      summary: "No aparecen senales de escaneo automatico de dependencias, codigo o secretos.",
+      goal: "Agregar una primera alerta automatica sin asumir que el escaneo garantiza seguridad total.",
+      whyNow: "La categoria de seguridad tiene una brecha de alta prioridad en este reporte.",
+      evidenceLabel: "Security scanning detectado",
+      evidenceDetail: "No se detectaron workflows visibles de analisis de seguridad.",
+      conceptIds: [],
+      labId: "lab-security-scanning",
+      suggestedFiles: [".github/dependabot.yml", ".github/workflows/security.yml"],
+      commands: ["pnpm audit"],
+      steps: [
+        "Elige una comprobacion pequena: dependencias, codigo o secretos.",
+        "Agrega la configuracion en una rama y ejecutala primero de forma manual.",
+        "Documenta donde se revisan los hallazgos y quien decide si bloquean un merge."
+      ],
+      expectedOutcome: "Los riesgos conocidos aparecen antes del despliegue.",
+      completionCriteria: [
+        "La comprobacion produce un resultado visible.",
+        "El equipo sabe como responder a un hallazgo."
+      ],
+      question: "Que aporta un escaneo de seguridad automatico?",
+      answers: [
+        ["Una alerta temprana sobre riesgos conocidos", true],
+        ["La garantia de cero vulnerabilidades", false],
+        ["Permiso para publicar secretos", false]
+      ],
+      explanation:
+        "El escaneo reduce riesgo y acelera hallazgos, pero no garantiza seguridad total."
+    }),
+    createFallbackMission({
+      id: "mission-observability",
+      order: 3,
+      title: "Visibilidad operativa",
+      category: "observability",
+      summary:
+        "Existe un health check, pero el arbol de archivos no confirma logs estructurados ni metricas.",
+      goal: "Distinguir salud, logs y metricas agregando una senal operativa pequena.",
+      whyNow:
+        "La aplicacion puede indicar que esta viva, pero aun cuesta explicar por que falla o se vuelve lenta.",
+      evidenceLabel: "Logging o metricas detectadas",
+      evidenceDetail: "La evidencia actual solo confirma un endpoint de health.",
+      conceptIds: ["health-check"],
+      labId: "lab-observability",
+      suggestedFiles: ["apps/api/src/modules/health", "docs/observability.md"],
+      commands: ["curl http://localhost:3001/api/health"],
+      steps: [
+        "Ejecuta el health check y observa que informacion entrega.",
+        "Agrega o documenta un log util para arranque y errores.",
+        "Provoca una comprobacion controlada y confirma que la senal sea entendible."
+      ],
+      expectedOutcome:
+        "Puedes verificar que el servicio esta vivo y localizar una primera pista cuando falla.",
+      completionCriteria: [
+        "El health check responde de forma predecible.",
+        "Existe una senal util para diagnostico inicial."
+      ],
+      question: "Que te dice un health check?",
+      answers: [
+        ["Si el servicio responde a una comprobacion basica", true],
+        ["La causa exacta de cualquier error", false],
+        ["Todo el rendimiento historico", false]
+      ],
+      explanation:
+        "El health check es una senal minima. Logs y metricas explican mejor que esta ocurriendo."
+    })
+  ];
+}
+
+interface FallbackMissionInput {
+  id: string;
+  order: number;
+  title: string;
+  category: NonNullable<DevOpsReport["guidedMissions"]>[number]["category"];
+  summary: string;
+  goal: string;
+  whyNow: string;
+  evidenceLabel: string;
+  evidenceDetail: string;
+  conceptIds: string[];
+  labId: string;
+  suggestedFiles: string[];
+  commands: string[];
+  steps: string[];
+  expectedOutcome: string;
+  completionCriteria: string[];
+  question: string;
+  answers: Array<[string, boolean]>;
+  explanation: string;
+}
+
+function createFallbackMission(
+  input: FallbackMissionInput
+): NonNullable<DevOpsReport["guidedMissions"]>[number] {
+  return {
+    id: input.id,
+    order: input.order,
+    title: input.title,
+    category: input.category,
+    summary: input.summary,
+    plainLanguageGoal: input.goal,
+    whyNow: input.whyNow,
+    estimatedTime: "30-60 min",
+    evidenceLevel: "needs-review",
+    evidenceReason:
+      "Este es un reporte local de respaldo. Confirma la evidencia en el repositorio antes de cambiarlo.",
+    evidence: [
+      {
+        id: `${input.id}-evidence`,
+        label: input.evidenceLabel,
+        detail: input.evidenceDetail,
+        level: "needs-review",
+        files: []
+      }
+    ],
+    conceptIds: input.conceptIds,
+    labId: input.labId,
+    prerequisites: ["Trabajar en una rama", "Guardar el estado actual antes de editar"],
+    suggestedFiles: input.suggestedFiles,
+    commands: input.commands,
+    steps: input.steps.map((instruction, index) => ({
+      id: `${input.id}-step-${index + 1}`,
+      title:
+        ["Entiende el punto de partida", "Haz el cambio mas pequeno", "Comprueba el resultado"][
+          index
+        ] ?? "Documenta lo aprendido",
+      instruction
+    })),
+    expectedOutcome: input.expectedOutcome,
+    completionCriteria: input.completionCriteria,
+    knowledgeCheck: {
+      question: input.question,
+      options: input.answers.map(([label, correct], index) => ({
+        id: `option-${index + 1}`,
+        label,
+        correct,
+        feedback: correct
+          ? "Correcto. Esa es la idea clave."
+          : "Casi. Revisa la explicacion y prueba otra vez."
+      })),
+      explanation: input.explanation
+    },
+    completionMessage: `Ya puedes explicar ${input.title.toLowerCase()} usando evidencia del repositorio.`
+  };
+}
