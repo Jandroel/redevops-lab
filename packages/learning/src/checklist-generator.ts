@@ -45,7 +45,7 @@ export function generateProductionChecklist({
   const context = createChecklistContext(analysis, score);
   const definitions = createChecklistDefinitions(level);
 
-  return definitions.slice(0, 18).map((definition) => {
+  return definitions.slice(0, 20).map((definition) => {
     const done = definition.done(context);
     const evidence = done
       ? definition.evidence(context)
@@ -55,7 +55,7 @@ export function generateProductionChecklist({
       id: definition.id,
       title: definition.title[language],
       description: definition.description[language],
-      status: done ? "done" : definition.missingStatus ?? "missing",
+      status: done ? "done" : (definition.missingStatus ?? "missing"),
       category: definition.category,
       priority: definition.priority,
       evidence: unique(evidence).slice(0, 6)
@@ -94,6 +94,18 @@ function createChecklistDefinitions(level: ExperienceLevel): ChecklistItemDefini
       evidence: (context) => ruleEvidence(context, "configuration.docs")
     },
     {
+      id: "configuration.env_safety",
+      category: "configuration",
+      priority: "high",
+      title: { es: "Plantilla de entorno segura", en: "Safe environment template" },
+      description: {
+        es: "Los valores de ejemplo estan vacios o usan placeholders; no parecen credenciales reales.",
+        en: "Example values are empty or use placeholders; they do not appear to be real credentials."
+      },
+      done: (context) => rulePassed(context, "configuration.env_safety"),
+      evidence: (context) => ruleEvidence(context, "configuration.env_safety")
+    },
+    {
       id: "containerization.dockerfile",
       category: "containerization",
       priority: "high",
@@ -130,6 +142,28 @@ function createChecklistDefinitions(level: ExperienceLevel): ChecklistItemDefini
       evidence: (context) => ruleEvidence(context, "containerization.dockerignore")
     },
     {
+      id: "containerization.image_quality",
+      category: "containerization",
+      priority: "high",
+      title: { es: "Imagen Docker preparada para runtime", en: "Runtime-ready Docker image" },
+      description: {
+        es: "El Dockerfile incluye practicas verificables como multi-stage, instalacion reproducible o usuario no-root.",
+        en: "The Dockerfile includes verifiable practices such as multi-stage builds, reproducible installs, or a non-root user."
+      },
+      done: (context) =>
+        [
+          "containerization.multi_stage",
+          "containerization.reproducible_install",
+          "security.container_hardening"
+        ].filter((id) => rulePassed(context, id)).length >= 2,
+      evidence: (context) =>
+        unique([
+          ...ruleEvidence(context, "containerization.multi_stage"),
+          ...ruleEvidence(context, "containerization.reproducible_install"),
+          ...ruleEvidence(context, "security.container_hardening")
+        ])
+    },
+    {
       id: "ci_cd.pipeline",
       category: "ci_cd",
       priority: "high",
@@ -138,36 +172,41 @@ function createChecklistDefinitions(level: ExperienceLevel): ChecklistItemDefini
         es: "Se detecto al menos una configuracion de CI/CD visible.",
         en: "At least one visible CI/CD configuration was detected."
       },
-      done: (context) => signalDetected(context, "github_actions") || signalDetected(context, "external_ci"),
+      done: (context) =>
+        signalDetected(context, "github_actions") || signalDetected(context, "external_ci"),
       evidence: (context) =>
-        unique([...signalEvidence(context, "github_actions"), ...signalEvidence(context, "external_ci")])
+        unique([
+          ...signalEvidence(context, "github_actions"),
+          ...signalEvidence(context, "external_ci")
+        ])
     },
     {
       id: "ci_cd.tests_build",
       category: "ci_cd",
       priority: "high",
       title: {
-        es: "Workflow de tests/build probable",
-        en: "Tests/build workflow likely exists"
+        es: "Tests/build ejecutados en CI",
+        en: "Tests/build run in CI"
       },
       description: {
-        es: "Los nombres de workflows sugieren validacion automatizada de tests o build.",
-        en: "Workflow names suggest automated test or build validation."
+        es: "El contenido de los workflows ejecuta tests o una compilacion verificable.",
+        en: "Workflow content executes tests or a verifiable build."
       },
       done: (context) => rulePassed(context, "ci_cd.tests") || rulePassed(context, "ci_cd.build"),
-      evidence: (context) => unique([...ruleEvidence(context, "ci_cd.tests"), ...ruleEvidence(context, "ci_cd.build")])
+      evidence: (context) =>
+        unique([...ruleEvidence(context, "ci_cd.tests"), ...ruleEvidence(context, "ci_cd.build")])
     },
     {
       id: "ci_cd.deploy_release",
       category: "ci_cd",
       priority: deployPriority,
       title: {
-        es: "Workflow deploy/release probable",
-        en: "Deploy/release workflow likely exists"
+        es: "Deploy/release ejecutado en CI",
+        en: "Deploy/release runs in CI"
       },
       description: {
-        es: "Los nombres de workflows sugieren automatizacion de despliegue o release.",
-        en: "Workflow names suggest deployment or release automation."
+        es: "El contenido del workflow incluye pasos de despliegue, release o publicacion.",
+        en: "Workflow content includes deployment, release, or publishing steps."
       },
       done: (context) => rulePassed(context, "ci_cd.deploy"),
       evidence: (context) => ruleEvidence(context, "ci_cd.deploy"),
@@ -197,7 +236,10 @@ function createChecklistDefinitions(level: ExperienceLevel): ChecklistItemDefini
       done: (context) =>
         rulePassed(context, "security.codeql") || rulePassed(context, "security.scanning"),
       evidence: (context) =>
-        unique([...ruleEvidence(context, "security.codeql"), ...ruleEvidence(context, "security.scanning")])
+        unique([
+          ...ruleEvidence(context, "security.codeql"),
+          ...ruleEvidence(context, "security.scanning")
+        ])
     },
     {
       id: "security.policy",
@@ -313,10 +355,17 @@ function createChecklistDefinitions(level: ExperienceLevel): ChecklistItemDefini
   ];
 }
 
-function createChecklistContext(analysis: RepositoryAnalysis, score: DevOpsScoreSummary): ChecklistContext {
+function createChecklistContext(
+  analysis: RepositoryAnalysis,
+  score: DevOpsScoreSummary
+): ChecklistContext {
   const treeFiles = analysis.tree.filter((item) => item.type === "file").map((item) => item.path);
-  const files = unique([...treeFiles, ...analysis.importantFiles]).sort((a, b) => a.localeCompare(b));
-  const rules = new Map(score.categories.flatMap((category) => category.rules).map((rule) => [rule.id, rule]));
+  const files = unique([...treeFiles, ...analysis.importantFiles]).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const rules = new Map(
+    score.categories.flatMap((category) => category.rules).map((rule) => [rule.id, rule])
+  );
   const signals = new Map(analysis.devopsSignals.map((signal) => [signal.key, signal]));
 
   return {

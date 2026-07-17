@@ -6,7 +6,8 @@
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "dependencies": {
-    "@redevops-lab/shared": "workspace:*"
+    "@redevops-lab/shared": "workspace:*",
+    "yaml": "^2.9.0"
   },
   "exports": {
     ".": {

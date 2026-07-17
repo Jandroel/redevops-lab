@@ -1,4 +1,4 @@
-import { parseGitHubUrl } from "@redevops-lab/analyzer";
+import { analyzeRepositoryContents, parseGitHubUrl } from "@redevops-lab/analyzer";
 import {
   generateDevOpsConcepts,
   generateGuidedLearningMissions,
@@ -160,6 +160,54 @@ export const demoRepositoryInput: RepositoryInput = {
   language: "es"
 };
 
+const demoContentFiles = [
+  {
+    path: "package.json",
+    kind: "package_json" as const,
+    content: JSON.stringify({
+      packageManager: "pnpm@11.9.0",
+      scripts: {
+        build: "pnpm build:packages",
+        lint: "pnpm -r lint",
+        typecheck: "pnpm -r typecheck"
+      }
+    }),
+    size: 160,
+    truncated: false
+  },
+  {
+    path: ".github/workflows/ci.yml",
+    kind: "workflow" as const,
+    content:
+      "name: CI\non:\n  pull_request:\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: pnpm lint\n      - run: pnpm typecheck\n      - run: pnpm build\n",
+    size: 170,
+    truncated: false
+  },
+  {
+    path: ".env.example",
+    kind: "env_example" as const,
+    content: "PORT=3001\nGITHUB_TOKEN=\n",
+    size: 28,
+    truncated: false
+  },
+  {
+    path: "README.md",
+    kind: "readme" as const,
+    content:
+      "# ReDevOps Lab\n## Installation\npnpm install\n## Configuration\nUse .env.example\n## Testing\npnpm test\n## Architecture\nSee docs.\n## Troubleshooting\nCheck API logs.\n",
+    size: 168,
+    truncated: false
+  },
+  {
+    path: "docker-compose.yml",
+    kind: "compose" as const,
+    content:
+      "services:\n  postgres:\n    image: postgres:16\n    env_file: .env\n    healthcheck:\n      test: pg_isready\n",
+    size: 110,
+    truncated: false
+  }
+];
+
 export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
   const repository = parseGitHubUrl(input.url);
 
@@ -202,6 +250,17 @@ export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
     ],
     devopsSignals,
     detectedStack,
+    contentAnalysis: analyzeRepositoryContents({
+      files: demoContentFiles,
+      selection: {
+        files: demoContentFiles.map(({ path, kind, size }) => ({ path, kind, size })),
+        candidateFiles: demoContentFiles.length,
+        skippedLargeFiles: 0,
+        maxFiles: 10,
+        maxFileBytes: 96_000,
+        maxTotalBytes: 480_000
+      }
+    }),
     generatedAt,
     warnings: ["Demo report uses local mock analysis data."],
     treeStats: {

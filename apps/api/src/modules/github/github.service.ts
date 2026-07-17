@@ -9,7 +9,11 @@ export class GitHubService {
       token: process.env.GITHUB_TOKEN || undefined,
       userAgent: "redevops-lab",
       maxTreeItems: 5000,
-      timeoutMs: 15_000
+      timeoutMs: 15_000,
+      maxContentFiles: 10,
+      maxContentFileBytes: 96_000,
+      maxContentBytes: 480_000,
+      contentTimeoutMs: 8_000
     });
   }
 }

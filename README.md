@@ -8,7 +8,7 @@
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
-The project is in active development. The current implementation covers the foundation through Phase 8: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, UI/UX polish, examples, documentation, CI, deploy-ready structure, and a beginner-focused learning experience.
+The project is in active development. The current implementation covers the foundation through Phase 9: monorepo, web experience, NestJS API, OpenAPI docs, bounded GitHub repository content analysis, rule-based scoring and learning engines, optional AI mentor layer, UI/UX polish, examples, documentation, CI, deploy-ready structure, and a beginner-focused learning experience.
 
 ## Features
 
@@ -17,6 +17,8 @@ The project is in active development. The current implementation covers the foun
 - Public GitHub repository analyzer
 - Basic stack detection from repository files
 - DevOps signal detection for Docker, CI/CD, security, docs, observability, and infrastructure
+- Bounded content inspection for selected `package.json`, GitHub Actions, Dockerfile, Compose, README, and environment example files
+- Content-backed checks for actual CI steps, Docker build quality, safe env placeholders, and documentation coverage
 - Personalized learning path generated from score gaps and repository signals
 - Guided DevOps missions prioritized from repository gaps, with plain-language goals, evidence confidence, small steps, knowledge checks, and completion criteria
 - Beginner learning modules that connect concepts, labs, checklist evidence, and outcomes
@@ -39,6 +41,7 @@ The project is in active development. The current implementation covers the foun
 - Frontend: Next.js, React, TypeScript, Tailwind CSS
 - Backend: NestJS, TypeScript
 - Internal packages: shared contracts, analyzer, scoring, learning
+- Structured configuration parsing: YAML
 - Future database: PostgreSQL
 - Future ORM: Prisma
 - Deployment target: Vercel for `apps/web`, Railway for `apps/api`
@@ -97,7 +100,7 @@ GET  /api/reports/:id/export
 GET  /api/docs
 ```
 
-`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, and recommended next steps.
+`POST /api/analyze` validates a GitHub repository URL, reads public repository metadata and recursive tree data, then safely inspects a small allowlist of high-value text files. It returns a `DevOpsReport` with detected stack, DevOps signals, content-backed checks, findings, rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, and recommended next steps.
 
 ## Environment
 
@@ -129,7 +132,7 @@ AI_TIMEOUT_MS=20000
 
 ## Project Status
 
-ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, concepts, guided missions, learning modules, learning path, and labs are deterministic and evidence-based. Guided missions explicitly label conclusions as confirmed, inferred, or requiring manual review. The AI mentor layer is optional and may explain or prioritize the report, but it does not change deterministic output. There is no database, login, private repository support, or real deployment automation yet.
+ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, concepts, guided missions, learning modules, learning path, and labs are deterministic and evidence-based. The analyzer inspects at most 10 selected text files, 96 KB per file, and 480 KB in total; raw content and environment values are never returned in the report. Guided missions explicitly label conclusions as confirmed, inferred, or requiring manual review. The AI mentor layer is optional and may explain or prioritize the report, but it does not change deterministic output. There is no database, login, private repository support, or real deployment automation yet.
 
 ## Roadmap
 
@@ -141,9 +144,10 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 6. Optional AI mentor explanations grounded in analyzer output
 7. UI/UX polish, report dashboard organization, examples, loading/error/empty states, and deploy readiness notes
 8. Beginner learning journey, glossary, richer labs, educational docs, and interactive guided mission mode
-9. Persisted reports and export polish
-10. PostgreSQL persistence
-11. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
+9. Bounded deep analysis of high-value repository configuration and documentation
+10. Persisted reports with PostgreSQL and Prisma
+11. Report history and lifecycle improvements
+12. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
 
 ## Deployment Plan
 
@@ -157,8 +161,8 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 - No database or Prisma connection yet
 - AI mentor is optional, disabled by default, and does not replace deterministic analysis
 - No private repository analysis yet
-- Score is deterministic and rule-based, but still limited to repository structure and file-name evidence
-- Concept, mission, module, learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
+- Score is deterministic and rule-based. Selected configuration and documentation files use content-backed checks; source code, runtime behavior, and most repository files remain structure-based signals
+- Content analysis is deliberately bounded and does not execute scripts, workflows, images, containers, or repository code
 - Mission evidence distinguishes visible confirmation from inference, but it is still not a formal DevOps, security, or production audit
 - Learning progress, completed steps, and knowledge-check answers are stored locally in the browser and are not synced because there is no database yet
 

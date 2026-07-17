@@ -54,9 +54,9 @@ function createCategorySummary(key: DevOpsScoreCategoryKey, percentage: number):
 
   const summaries: Record<DevOpsScoreCategoryKey, string> = {
     containerization: `Containerization is ${status} based on Docker and local orchestration signals.`,
-    ci_cd: `CI/CD is ${status} based on detected pipeline and workflow naming signals.`,
-    configuration: `Configuration readiness is ${status} based on environment examples and config structure.`,
-    security: `Security automation is ${status} based on dependency scanning and policy signals.`,
+    ci_cd: `CI/CD is ${status} based on pipeline triggers and validation steps found in workflow content.`,
+    configuration: `Configuration readiness is ${status} based on environment examples, safe placeholders, and config structure.`,
+    security: `Security automation is ${status} based on scanning, policy, and container hardening signals.`,
     observability: `Observability is ${status} based on health, logging, metrics, and tracing signals.`,
     documentation: `Documentation is ${status} based on README, docs, deployment, and contributor files.`,
     infrastructure: `Infrastructure readiness is ${status} based on IaC and deployment configuration signals.`

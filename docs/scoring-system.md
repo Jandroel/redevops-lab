@@ -15,22 +15,23 @@ It uses:
 - important files
 - DevOps signals
 - detected stack
+- bounded content checks for selected configuration and documentation files
 
-It does not call GitHub directly, does not run code, and does not inspect deep file contents yet.
+It does not call GitHub directly and never runs repository code. When bounded content evidence exists, it prefers that evidence over filename inference.
 
 ## Categories And Weights
 
 The global score totals 100 points.
 
-| Category | Weight |
-| --- | ---: |
-| Containerization | 20 |
-| CI/CD | 20 |
-| Configuration | 15 |
-| Security | 15 |
-| Observability | 10 |
-| Documentation | 10 |
-| Infrastructure | 10 |
+| Category         | Weight |
+| ---------------- | -----: |
+| Containerization |     20 |
+| CI/CD            |     20 |
+| Configuration    |     15 |
+| Security         |     15 |
+| Observability    |     10 |
+| Documentation    |     10 |
+| Infrastructure   |     10 |
 
 ## Rules
 
@@ -45,33 +46,40 @@ Each rule returns:
 
 ### Containerization - 20 pts
 
-- Dockerfile detected: 8 pts
-- `.dockerignore` detected: 5 pts
-- Docker Compose detected: 5 pts
-- Multiple container artifacts detected: 2 pts
+- Dockerfile detected: 5 pts
+- `.dockerignore` detected: 3 pts
+- Docker Compose detected: 4 pts
+- Multi-stage Docker build confirmed: 3 pts
+- Reproducible dependency install confirmed: 3 pts
+- Docker health check confirmed: 2 pts
 
 ### CI/CD - 20 pts
 
-- CI/CD pipeline detected: 10 pts
-- Test workflow probable: 4 pts
-- Build workflow probable: 3 pts
-- Deploy or release workflow probable: 3 pts
+- CI/CD pipeline detected: 6 pts
+- Pull request trigger confirmed: 3 pts
+- Automated test step confirmed: 3 pts
+- Automated lint step confirmed: 2 pts
+- Automated typecheck step confirmed: 2 pts
+- Automated build step confirmed: 2 pts
+- Deploy, release, or publish step confirmed: 2 pts
 
-Workflow purpose is inferred from file names such as `ci.yml`, `test.yml`, `build.yml`, `deploy.yml`, `release.yml`, or `publish.yml`.
+Workflow purpose is read from parsed triggers, jobs, step names, commands, and referenced actions. Filename inference is used only when evaluating an older report without `contentAnalysis`.
 
 ### Configuration - 15 pts
 
-- `.env.example` or `.env.sample` detected: 6 pts
+- `.env.example` or `.env.sample` detected: 4 pts
+- safe empty or placeholder values confirmed: 3 pts
 - Configuration documentation inferred: 3 pts
-- `config/` directory detected: 3 pts
+- `config/` directory detected: 2 pts
 - Environment separation inferred: 3 pts
 
 ### Security - 15 pts
 
-- Dependabot detected: 5 pts
-- CodeQL detected: 4 pts
-- Snyk, Trivy, Semgrep, or Gitleaks detected: 3 pts
-- `SECURITY.md` detected: 3 pts
+- Dependabot detected: 4 pts
+- CodeQL detected: 3 pts
+- security scanning path or workflow step detected: 3 pts
+- `SECURITY.md` detected: 2 pts
+- non-root or pinned container hardening confirmed: 3 pts
 
 ### Observability - 10 pts
 
@@ -82,11 +90,11 @@ Workflow purpose is inferred from file names such as `ci.yml`, `test.yml`, `buil
 
 ### Documentation - 10 pts
 
-- `README.md`: 3 pts
+- `README.md`: 2 pts
+- local setup instructions confirmed in README: 2 pts
 - `docs/`: 2 pts
 - deployment documentation: 2 pts
 - `CONTRIBUTING.md`: 1 pt
-- `CHANGELOG.md`: 1 pt
 - license metadata or license file: 1 pt
 
 ### Infrastructure - 10 pts
@@ -98,24 +106,26 @@ Workflow purpose is inferred from file names such as `ci.yml`, `test.yml`, `buil
 
 ## Maturity Levels
 
-| Percentage | Level |
-| --- | --- |
-| 0-24 | Initial |
-| 25-49 | Foundation |
-| 50-69 | Operational |
-| 70-84 | Production-Ready |
-| 85-100 | Advanced |
+| Percentage | Level            |
+| ---------- | ---------------- |
+| 0-24       | Initial          |
+| 25-49      | Foundation       |
+| 50-69      | Operational      |
+| 70-84      | Production-Ready |
+| 85-100     | Advanced         |
 
 ## Explainability
 
 Every category includes the rules that passed and failed. For example:
 
 ```txt
-Containerization: 13/20
-+8 Dockerfile detected
-+5 Docker Compose detected
+Containerization: 12/20
++5 Dockerfile detected
++4 Docker Compose detected
++3 Multi-stage Docker build confirmed
 +0 .dockerignore missing
-+0 Multiple container artifacts missing
++0 Reproducible dependency install missing
++0 Docker health check missing
 ```
 
 The API also returns:
@@ -130,8 +140,8 @@ In Phase 5, `packages/learning` also uses score categories, rule evidence, faile
 
 ## Current Limitations
 
-- The score is based mainly on structure, filenames, and known paths.
-- It does not inspect deep file contents yet.
+- The score combines structure, filenames, known paths, and bounded content checks.
+- General source code and runtime behavior are not inspected.
 - It does not run tests, workflows, Dockerfiles, or deployment commands.
 - It does not validate whether workflows or Dockerfiles actually work.
 - It does not analyze private repositories.
@@ -140,4 +150,4 @@ In Phase 5, `packages/learning` also uses score categories, rule evidence, faile
 
 ## Future Improvements
 
-Later phases can add content-aware analysis, richer package detection, historical trends, and AI explanations grounded in the deterministic score.
+Later phases can add richer source-language analyzers, historical trends, and AI explanations grounded in the deterministic score.
