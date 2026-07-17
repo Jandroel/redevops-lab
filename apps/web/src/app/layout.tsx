@@ -5,8 +5,15 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 
 export const metadata: Metadata = {
-  title: "ReDevOps Lab",
-  description: "Turn any GitHub repository into a DevOps learning lab."
+  applicationName: "ReDevOps Lab",
+  title: {
+    default: "ReDevOps Lab",
+    template: "%s | ReDevOps Lab"
+  },
+  description: "Turn any GitHub repository into a DevOps learning lab.",
+  icons: {
+    icon: "/icon.svg"
+  }
 };
 
 export default function RootLayout({

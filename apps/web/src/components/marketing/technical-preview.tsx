@@ -18,8 +18,8 @@ const signals = [
 export function TechnicalPreview() {
   return (
     <section className="border-b border-devops-border/70 bg-devops-bg">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
-        <div className="rounded-lg border border-devops-border bg-slate-950 panel-edge">
+      <div className="mx-auto grid min-w-0 max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
+        <div className="min-w-0 rounded-lg border border-devops-border bg-slate-950 panel-edge">
           <div className="flex items-center justify-between border-b border-devops-border px-5 py-4">
             <div className="flex gap-2">
               <span className="h-3 w-3 rounded-full bg-devops-red" />
@@ -76,7 +76,10 @@ export function TechnicalPreview() {
               ["10+", "Checklist checks"],
               ["4-8", "Hands-on labs"]
             ].map(([value, label]) => (
-              <div key={label} className="rounded-lg border border-devops-border bg-devops-surface/70 p-4">
+              <div
+                key={label}
+                className="rounded-lg border border-devops-border bg-devops-surface/70 p-4"
+              >
                 <p className="text-2xl font-semibold text-white">{value}</p>
                 <p className="mt-1 text-sm text-devops-muted">{label}</p>
               </div>

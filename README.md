@@ -1,6 +1,10 @@
-# ReDevOps Lab
+<p align="center">
+  <img src="apps/web/public/brand/redevops-mark.svg" width="88" alt="ReDevOps Lab logo" />
+</p>
 
-**Turn any GitHub repository into a DevOps learning lab.**
+<h1 align="center">ReDevOps Lab</h1>
+
+<p align="center"><strong>Turn any GitHub repository into a DevOps learning lab.</strong></p>
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
