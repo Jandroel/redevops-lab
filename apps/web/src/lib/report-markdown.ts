@@ -7,7 +7,8 @@ import type {
   GuidedLearningMission,
   LearningPathStep,
   ProductionChecklistItem,
-  ReportLanguage
+  ReportLanguage,
+  RepositoryContentAnalysis
 } from "@redevops-lab/shared";
 
 export function createReportMarkdown(report: DevOpsReport): string {
@@ -35,6 +36,7 @@ export function createReportMarkdown(report: DevOpsReport): string {
         )
         .join("\n")
     : `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
+  const deepAnalysis = formatContentAnalysis(report.analysis?.contentAnalysis, language);
   const categoryLines = categories
     .map((category) => formatCategory(category, language))
     .join("\n\n");
@@ -83,6 +85,10 @@ ${importantFiles}
 ## DevOps Signals
 
 ${signals}
+
+## ${label(language, "Analisis profundo", "Deep Repository Analysis")}
+
+${deepAnalysis}
 
 ## DevOps Score
 
@@ -181,6 +187,32 @@ ${label(language, "Comprueba lo aprendido", "Knowledge check")}: ${mission.knowl
 ${mission.knowledgeCheck.explanation}`
     )
     .join("\n\n");
+}
+
+function formatContentAnalysis(
+  analysis: RepositoryContentAnalysis | undefined,
+  language: ReportLanguage
+): string {
+  if (!analysis) {
+    return `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
+  }
+
+  const files =
+    analysis.files.map((file) => `- ${file.path} (${file.kind})`).join("\n") || "- None";
+  const checks =
+    analysis.checks
+      .map(
+        (check) =>
+          `- **${check.status}**: ${check.title}${check.evidence.length ? ` - ${check.evidence.join(", ")}` : ""}`
+      )
+      .join("\n") || "- None";
+
+  return `${label(language, "Archivos inspeccionados", "Files inspected")}: ${analysis.stats.analyzedFiles}/${analysis.stats.selectedFiles}
+
+${files}
+
+${label(language, "Comprobaciones de contenido", "Content checks")}:
+${checks}`;
 }
 
 function formatCategory(

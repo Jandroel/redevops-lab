@@ -28,7 +28,7 @@ Returns API status and runtime metadata.
 
 ## POST /analyze
 
-Validates a GitHub repository URL, calls GitHub for public repository metadata and tree data, and returns a `DevOpsReport`.
+Validates a GitHub repository URL, calls GitHub for public repository metadata and tree data, safely inspects selected high-value text files, and returns a `DevOpsReport`.
 
 Request:
 
@@ -67,17 +67,25 @@ The endpoint uses:
 ```txt
 GET https://api.github.com/repos/{owner}/{repo}
 GET https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
+GET https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{selected-path}
 ```
 
 `GITHUB_TOKEN` is optional and only increases rate limits. Private repositories are not supported in this phase.
 
-The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, initial findings, a rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, recommended next steps, and an optional `ai` mentor section.
+The report includes real repository metadata, filtered tree data, important files, detected stack, DevOps signals, bounded `contentAnalysis`, initial findings, a rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, prioritized guided missions, learning modules, learning path, hands-on labs, recommended next steps, and an optional `ai` mentor section.
 
 Response highlights:
 
 ```json
 {
-  "analysis": {},
+  "analysis": {
+    "contentAnalysis": {
+      "files": [],
+      "checks": [],
+      "warnings": [],
+      "stats": {}
+    }
+  },
   "score": {},
   "productionChecklist": [],
   "concepts": [],
@@ -147,6 +155,6 @@ Errors use a consistent JSON shape:
 - AI mentor content is optional and disabled by default.
 - No authentication.
 - No private repository analysis.
-- Score is rule-based, but it does not inspect deep file contents yet.
+- Score is rule-based and uses bounded content evidence where supported. It still does not execute or runtime-validate repository code.
 - Checklist, concept, guided mission, learning module, learning path, lab, and next-step generation are rule-based and do not depend on AI.
 - AI mentor output is optional and does not change deterministic analyzer/scoring/learning output.

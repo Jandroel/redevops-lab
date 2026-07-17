@@ -1,4 +1,6 @@
 import type { RepositoryMetadata, RepoTreeItem } from "@redevops-lab/shared";
+import type { FetchedContentFile } from "./content-analyzer.js";
+import type { SelectedContentFile } from "./content-selector.js";
 import { filterRepoTree, normalizeRepoTreeItem } from "./repo-tree.js";
 import type { FilteredRepoTree } from "./repo-tree.js";
 
@@ -7,6 +9,16 @@ export interface GitHubClientOptions {
   userAgent?: string;
   timeoutMs?: number;
   maxTreeItems?: number;
+  maxContentFiles?: number;
+  maxContentFileBytes?: number;
+  maxContentBytes?: number;
+  contentTimeoutMs?: number;
+}
+
+export interface FetchRepositoryContentsResult {
+  files: FetchedContentFile[];
+  warnings: string[];
+  failedFiles: number;
 }
 
 export class GitHubAnalyzerError extends Error {
@@ -129,6 +141,111 @@ export async function fetchGitHubRepositoryTree(
   return filtered;
 }
 
+export async function fetchGitHubRepositoryContents(
+  owner: string,
+  repo: string,
+  branch: string,
+  selectedFiles: SelectedContentFile[],
+  options: GitHubClientOptions = {}
+): Promise<FetchRepositoryContentsResult> {
+  const settled = await Promise.all(
+    selectedFiles.map((file) => fetchGitHubRepositoryContent(owner, repo, branch, file, options))
+  );
+  const files: FetchedContentFile[] = [];
+  const warnings: string[] = [];
+  let failedFiles = 0;
+
+  for (const result of settled) {
+    if (result.file) {
+      files.push(result.file);
+    } else {
+      failedFiles += 1;
+    }
+
+    if (result.warning) {
+      warnings.push(result.warning);
+    }
+  }
+
+  return { files, warnings, failedFiles };
+}
+
+async function fetchGitHubRepositoryContent(
+  owner: string,
+  repo: string,
+  branch: string,
+  selected: SelectedContentFile,
+  options: GitHubClientOptions
+): Promise<{ file?: FetchedContentFile; warning?: string }> {
+  if (!isSafeRepositoryPath(selected.path)) {
+    return { warning: `${selected.path}: skipped because the repository path is not safe.` };
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = options.contentTimeoutMs ?? 8_000;
+  const maxBytes = options.maxContentFileBytes ?? 96_000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const encodedPath = selected.path.split("/").map(encodeURIComponent).join("/");
+  const url = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${encodedPath}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": options.userAgent ?? "redevops-lab" },
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      return { warning: `${selected.path}: content could not be read (${response.status}).` };
+    }
+
+    const declaredLength = Number(response.headers.get("content-length") ?? 0);
+    if (declaredLength > maxBytes) {
+      await response.body?.cancel();
+      return {
+        warning: `${selected.path}: skipped because it exceeds the per-file analysis limit.`
+      };
+    }
+
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.includes(0)) {
+      return { warning: `${selected.path}: skipped because it appears to contain binary data.` };
+    }
+
+    const truncated = bytes.byteLength > maxBytes;
+    const bounded = truncated ? bytes.slice(0, maxBytes) : bytes;
+
+    return {
+      file: {
+        path: selected.path,
+        kind: selected.kind,
+        size: bounded.byteLength,
+        truncated,
+        content: new TextDecoder("utf-8", { fatal: false }).decode(bounded)
+      },
+      warning: truncated
+        ? `${selected.path}: analyzed only the first ${maxBytes} bytes.`
+        : undefined
+    };
+  } catch (error) {
+    return {
+      warning: isAbortError(error)
+        ? `${selected.path}: content request timed out after ${timeoutMs}ms.`
+        : `${selected.path}: content could not be read from GitHub.`
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function isSafeRepositoryPath(path: string): boolean {
+  return (
+    path.length > 0 &&
+    !path.startsWith("/") &&
+    !path.includes("\\") &&
+    path.split("/").every((segment) => segment.length > 0 && segment !== "." && segment !== "..")
+  );
+}
+
 async function githubRequest<T>(url: string, options: GitHubClientOptions): Promise<T> {
   const controller = new AbortController();
   const timeoutMs = options.timeoutMs ?? 15_000;
@@ -204,7 +321,9 @@ async function mapGitHubError(response: Response): Promise<GitHubAnalyzerError> 
 
   return new GitHubAnalyzerError(
     "unexpected_response",
-    message ? `GitHub returned an unexpected response: ${message}` : "GitHub returned an unexpected response.",
+    message
+      ? `GitHub returned an unexpected response: ${message}`
+      : "GitHub returned an unexpected response.",
     502
   );
 }

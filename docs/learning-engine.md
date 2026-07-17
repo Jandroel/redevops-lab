@@ -20,11 +20,11 @@ The engine receives:
 - `level`: `beginner`, `intermediate`, or `advanced`
 - `language`: `es` or `en`
 
-It uses visible repository signals, important files, detected stack, scoring rule evidence, and missing rule evidence.
+It uses visible repository signals, important files, detected stack, bounded content checks, scoring rule evidence, and missing rule evidence.
 
 ## Production-ready Checklist
 
-`generateProductionChecklist` returns 10 to 18 items. Items cover configuration, containerization, CI/CD, security, observability, documentation, and infrastructure.
+`generateProductionChecklist` returns up to 20 items. Items cover configuration, containerization, CI/CD, security, observability, documentation, and infrastructure. Content-backed items can distinguish a present file from a practice confirmed inside it, such as CI test steps or safe environment placeholders.
 
 Each item includes:
 
@@ -134,8 +134,8 @@ This is intentionally not a full i18n framework yet.
 
 ## Current Limitations
 
-- File content is not deeply inspected.
-- Workflow purpose is inferred from file paths and names.
+- Only a bounded allowlist of high-value configuration and documentation files is inspected by the analyzer.
+- Workflow purpose uses parsed triggers, job names, steps, commands, and actions when workflow content is available; filename inference remains only as a compatibility fallback for older reports.
 - Security and observability checks are signals, not audits.
 - Private repositories are not supported.
 - There is no persistence.

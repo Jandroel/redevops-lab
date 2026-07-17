@@ -116,21 +116,22 @@ function whyNow(
 }
 
 function moduleTemplates(): ModuleTemplate[] {
-  const runtimeChecklist = ["configuration.env_example", "configuration.docs"];
+  const runtimeChecklist = [
+    "configuration.env_example",
+    "configuration.env_safety",
+    "configuration.docs"
+  ];
   const containerChecklist = [
     "containerization.dockerfile",
     "containerization.dockerignore",
-    "containerization.compose"
+    "containerization.compose",
+    "containerization.image_quality"
   ];
-  const ciChecklist = ["ci_cd.pipeline", "ci_cd.tests_build", "ci_cd.deploy"];
+  const ciChecklist = ["ci_cd.pipeline", "ci_cd.tests_build", "ci_cd.deploy_release"];
   const securityChecklist = ["security.dependabot", "security.scanning", "security.policy"];
   const observabilityChecklist = ["observability.health", "observability.logging_metrics"];
   const documentationChecklist = ["documentation.deployment", "documentation.docs"];
-  const infrastructureChecklist = [
-    "infrastructure.iac",
-    "infrastructure.kubernetes",
-    "infrastructure.deployment_config"
-  ];
+  const infrastructureChecklist = ["infrastructure.iac_or_orchestration"];
 
   const templates: ModuleTemplate[] = [
     {

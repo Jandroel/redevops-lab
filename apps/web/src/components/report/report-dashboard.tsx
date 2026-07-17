@@ -6,6 +6,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { CategoryScoreBars } from "@/components/report/category-score-bars";
 import { ChecklistSection } from "@/components/report/checklist-section";
 import { ConceptGlossary } from "@/components/report/concept-glossary";
+import { ContentAnalysisPanel } from "@/components/report/content-analysis-panel";
 import { ExportMarkdownButton } from "@/components/report/export-markdown-button";
 import { ImportantFiles } from "@/components/report/important-files";
 import { LabsSection } from "@/components/report/labs-section";
@@ -57,6 +58,7 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const signals = report.analysis?.devopsSignals ?? [];
   const importantFiles = report.analysis?.importantFiles ?? [];
   const treeStats = report.analysis?.treeStats;
+  const contentAnalysis = report.analysis?.contentAnalysis;
   const categories = normalizeCategories(report.score.categories);
   const scoreStrengths = report.score.strengths ?? strengths;
   const scoreWeaknesses = report.score.weaknesses ?? gaps;
@@ -72,6 +74,11 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
     { label: "Labs", href: "#labs", meta: `${labs.length}` },
     { label: "Mentor", href: "#mentor", meta: report.ai?.provider ?? "mock" },
     { label: "Evidence", href: "#evidence", meta: `${categories.length}` },
+    {
+      label: "Deep scan",
+      href: "#deep-scan",
+      meta: `${contentAnalysis?.stats.analyzedFiles ?? 0}`
+    },
     { label: "Export", href: "#export", meta: "md" }
   ] as const;
 
@@ -220,6 +227,13 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
 
                 <div id="evidence" className="mt-6 scroll-mt-24">
                   <ScoringEvidence categories={categories} />
+                </div>
+
+                <div id="deep-scan" className="mt-6 scroll-mt-24">
+                  <ContentAnalysisPanel
+                    analysis={contentAnalysis}
+                    language={report.input.language}
+                  />
                 </div>
 
                 <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1.1fr_0.9fr]">

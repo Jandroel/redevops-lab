@@ -74,21 +74,30 @@
 - Markdown export updated with guided missions, evidence confidence, learning modules, and glossary terms
 - Beginner docs under `docs/learn/`
 
-## Phase 9 - Persistence and Report Lifecycle
+## Phase 9 - Deep Repository Analysis
+
+- Bounded, allowlisted content selection with per-file and total byte limits
+- Safe public content fetch with timeout and graceful degradation
+- Structured parsing for `package.json`, GitHub Actions, Compose, README, and environment examples
+- Directive analysis for Dockerfiles without executing builds
+- Content-backed scoring for CI steps, Docker quality, documentation coverage, and env placeholder safety
+- Deep-analysis report panel and Markdown export evidence
+
+## Phase 10 - Persistence and Report Lifecycle
 
 - Persist generated reports beyond session storage
 - Introduce stable report IDs backed by storage
 - Improve exported Markdown around persisted reports
 - Add report lifecycle documentation
 
-## Phase 10 - Persistence
+## Phase 11 - Persistence Implementation
 
 - PostgreSQL
 - Prisma
 - Saved public reports by ID
 - Report history without login initially
 
-## Phase 11 - Portfolio Quality
+## Phase 12 - Portfolio Quality
 
 - Tests
 - Demo GIF and screenshots

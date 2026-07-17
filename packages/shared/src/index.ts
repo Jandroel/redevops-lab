@@ -94,12 +94,54 @@ export interface DevOpsSignal {
   description: string;
 }
 
+export type RepositoryContentFileKind =
+  "package_json" | "workflow" | "dockerfile" | "compose" | "readme" | "env_example";
+
+export type RepositoryContentCheckStatus = "passed" | "warning" | "missing" | "info";
+
+export interface RepositoryContentCheck {
+  key: string;
+  category: DevOpsScoreCategoryKey;
+  status: RepositoryContentCheckStatus;
+  confidence: number;
+  title: string;
+  description: string;
+  evidence: string[];
+  recommendation?: string;
+}
+
+export interface RepositoryAnalyzedContentFile {
+  path: string;
+  kind: RepositoryContentFileKind;
+  size: number;
+  truncated: boolean;
+  checks: string[];
+}
+
+export interface RepositoryContentAnalysis {
+  files: RepositoryAnalyzedContentFile[];
+  checks: RepositoryContentCheck[];
+  warnings: string[];
+  stats: {
+    candidateFiles: number;
+    selectedFiles: number;
+    analyzedFiles: number;
+    skippedLargeFiles: number;
+    failedFiles: number;
+    totalBytes: number;
+    maxFiles: number;
+    maxFileBytes: number;
+    maxTotalBytes: number;
+  };
+}
+
 export interface RepositoryAnalysis {
   repository: RepositoryMetadata;
   tree: RepoTreeItem[];
   importantFiles: string[];
   devopsSignals: DevOpsSignal[];
   detectedStack: DetectedStackItem[];
+  contentAnalysis?: RepositoryContentAnalysis;
   generatedAt: string;
   warnings?: string[];
   treeStats?: {
