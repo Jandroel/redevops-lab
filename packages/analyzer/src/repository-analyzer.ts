@@ -1,6 +1,12 @@
 import type { RepositoryAnalysis } from "@redevops-lab/shared";
+import { analyzeRepositoryContents } from "./content-analyzer.js";
+import { selectRepositoryContentFiles } from "./content-selector.js";
 import { detectDevOpsSignals } from "./devops-detector.js";
-import { fetchGitHubRepositoryMetadata, fetchGitHubRepositoryTree } from "./github-client.js";
+import {
+  fetchGitHubRepositoryContents,
+  fetchGitHubRepositoryMetadata,
+  fetchGitHubRepositoryTree
+} from "./github-client.js";
 import type { GitHubClientOptions } from "./github-client.js";
 import { parseGitHubUrl } from "./github-url.js";
 import { detectStack } from "./stack-detector.js";
@@ -28,6 +34,20 @@ export async function analyzeGitHubRepository(
   );
   const detectedStack = detectStack(treeResult.tree);
   const devopsSignals = detectDevOpsSignals(treeResult.tree);
+  const contentSelection = selectRepositoryContentFiles(treeResult.tree, options);
+  const fetchedContent = await fetchGitHubRepositoryContents(
+    repository.owner,
+    repository.name,
+    repository.defaultBranch ?? "main",
+    contentSelection.files,
+    options
+  );
+  const contentAnalysis = analyzeRepositoryContents({
+    files: fetchedContent.files,
+    selection: contentSelection,
+    failedFiles: fetchedContent.failedFiles,
+    warnings: fetchedContent.warnings
+  });
 
   return {
     repository,
@@ -35,6 +55,7 @@ export async function analyzeGitHubRepository(
     importantFiles: treeResult.importantFiles,
     devopsSignals,
     detectedStack,
+    contentAnalysis,
     generatedAt: options.generatedAt ?? new Date().toISOString(),
     warnings: treeResult.warnings,
     treeStats: treeResult.stats

@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  analyzeRepositoryContents,
+  fetchGitHubRepositoryContents,
   fetchGitHubRepositoryMetadata,
   GitHubAnalyzerError,
-  parseGitHubUrl
+  parseGitHubUrl,
+  selectRepositoryContentFiles
 } from "../packages/analyzer/dist/index.js";
 import { calculateDevOpsScore } from "../packages/scoring/dist/index.js";
 import {
@@ -72,6 +75,97 @@ test("GitHub client maps aborted requests to timeout errors", async () => {
   }
 });
 
+test("deep content selection stays within safe limits", () => {
+  const selection = selectRepositoryContentFiles(
+    [
+      treeFile("README.md", 1200),
+      treeFile(".env.example", 300),
+      treeFile("package.json", 900),
+      treeFile("apps/web/package.json", 700),
+      treeFile(".github/workflows/ci.yml", 1400),
+      treeFile("Dockerfile", 600),
+      treeFile("large/Dockerfile", 200_000),
+      treeFile("src/index.ts", 4000)
+    ],
+    { maxContentFiles: 5, maxContentFileBytes: 96_000, maxContentBytes: 20_000 }
+  );
+
+  assert.equal(selection.files.length, 5);
+  assert.ok(selection.files.every((file) => file.path !== "src/index.ts"));
+  assert.ok(selection.files.every((file) => file.path !== "large/Dockerfile"));
+  assert.equal(selection.skippedLargeFiles, 1);
+});
+
+test("deep content analysis confirms practices without exposing env values", () => {
+  const files = [
+    contentFile(
+      "package.json",
+      "package_json",
+      JSON.stringify({
+        packageManager: "pnpm@11.9.0",
+        scripts: { test: "node --test", lint: "eslint .", typecheck: "tsc --noEmit", build: "tsc" }
+      })
+    ),
+    contentFile(
+      ".github/workflows/quality.yml",
+      "workflow",
+      `name: Quality\non:\n  pull_request:\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: pnpm test\n      - run: pnpm lint\n      - run: pnpm typecheck\n      - run: pnpm build\n      - uses: github/codeql-action/analyze@v3\n`
+    ),
+    contentFile(
+      "Dockerfile",
+      "dockerfile",
+      "FROM node:24-alpine AS build\nRUN pnpm install --frozen-lockfile\nFROM node:24-alpine\nUSER node\nHEALTHCHECK CMD node health.js\n"
+    ),
+    contentFile(
+      "README.md",
+      "readme",
+      "# App\n## Installation\npnpm install\n## Configuration\nUse .env.example\n## Testing\npnpm test\n## Deployment\nSee docs.\n## Architecture\nMonorepo.\n## Troubleshooting\nCheck logs."
+    ),
+    contentFile(
+      ".env.example",
+      "env_example",
+      "GITHUB_TOKEN=real-looking-secret-value\nPORT=3001\n"
+    )
+  ];
+  const selection = selectionFor(files);
+  const analysis = analyzeRepositoryContents({ files, selection });
+  const checks = new Map(analysis.checks.map((check) => [check.key, check]));
+
+  assert.equal(checks.get("ci.tests")?.status, "passed");
+  assert.equal(checks.get("ci.pull_request")?.status, "passed");
+  assert.equal(checks.get("docker.multi_stage")?.status, "passed");
+  assert.equal(checks.get("docker.non_root")?.status, "passed");
+  assert.equal(checks.get("readme.setup")?.status, "passed");
+  assert.equal(checks.get("env.safe_placeholders")?.status, "warning");
+  assert.ok(!JSON.stringify(analysis).includes("real-looking-secret-value"));
+
+  const score = calculateDevOpsScore({ ...createAnalysisFixture(), contentAnalysis: analysis });
+  const rules = score.categories.flatMap((category) => category.rules);
+  assert.equal(rules.find((rule) => rule.id === "ci_cd.tests")?.passed, true);
+  assert.equal(rules.find((rule) => rule.id === "configuration.env_safety")?.passed, false);
+});
+
+test("content fetch failures degrade to warnings", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response("not found", { status: 404 });
+
+  try {
+    const result = await fetchGitHubRepositoryContents(
+      "Jandroel",
+      "redevops-lab",
+      "main",
+      [{ path: "README.md", kind: "readme", size: 100 }],
+      { contentTimeoutMs: 100 }
+    );
+
+    assert.equal(result.files.length, 0);
+    assert.equal(result.failedFiles, 1);
+    assert.match(result.warnings[0], /404/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("scoring and learning engines generate useful deterministic output", () => {
   const analysis = createAnalysisFixture();
   const score = calculateDevOpsScore(analysis);
@@ -124,6 +218,12 @@ test("scoring and learning engines generate useful deterministic output", () => 
 
   assert.equal(score.maxScore, 100);
   assert.equal(score.categories.length, 7);
+  assert.ok(
+    score.categories.every(
+      (category) =>
+        category.rules.reduce((total, rule) => total + rule.maxPoints, 0) === category.maxScore
+    )
+  );
   assert.ok(score.total > 0);
   assert.ok(checklist.length >= 10);
   assert.ok(learningPath.length >= 5);
@@ -208,5 +308,30 @@ function signal(key, label, category, detected, files) {
     confidence: detected ? 0.9 : 0,
     files,
     description: detected ? `${label} detected.` : `${label} not detected.`
+  };
+}
+
+function treeFile(path, size) {
+  return { path, type: "file", size };
+}
+
+function contentFile(path, kind, content) {
+  return {
+    path,
+    kind,
+    content,
+    size: Buffer.byteLength(content),
+    truncated: false
+  };
+}
+
+function selectionFor(files) {
+  return {
+    files: files.map(({ path, kind, size }) => ({ path, kind, size })),
+    candidateFiles: files.length,
+    skippedLargeFiles: 0,
+    maxFiles: 10,
+    maxFileBytes: 96_000,
+    maxTotalBytes: 480_000
   };
 }

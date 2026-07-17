@@ -8,17 +8,20 @@ Phase 3 introduces the first real analyzer for public GitHub repositories.
 2. Fetch repository metadata from GitHub.
 3. Fetch the recursive Git tree for the default branch.
 4. Filter irrelevant paths and heavy assets.
-5. Detect stack items from file names.
-6. Detect DevOps signals from file names and known paths.
-7. Generate initial findings from real detected signals.
-8. Pass analyzer output to `packages/scoring` and `packages/learning`.
-9. Return a `DevOpsReport` compatible with the frontend.
+5. Select an allowlist of high-value text files within strict file and byte limits.
+6. Fetch selected public content from `raw.githubusercontent.com`.
+7. Parse `package.json`, GitHub Actions, Compose, Dockerfile, README, and env examples.
+8. Detect stack items and broad DevOps signals from known paths.
+9. Generate content-backed checks and initial findings.
+10. Pass analyzer output to `packages/scoring` and `packages/learning`.
+11. Return a `DevOpsReport` compatible with the frontend.
 
 ## GitHub Endpoints
 
 ```txt
 GET https://api.github.com/repos/{owner}/{repo}
 GET https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
+GET https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{selected-path}
 ```
 
 Headers:
@@ -31,6 +34,25 @@ Authorization: Bearer <GITHUB_TOKEN>
 ```
 
 `Authorization` is only sent when `GITHUB_TOKEN` exists.
+
+The token is sent only to `api.github.com`. Content requests to `raw.githubusercontent.com` do not include it.
+
+## Bounded Content Analysis
+
+The analyzer selects only these file kinds:
+
+- root and workspace `package.json` files
+- `.github/workflows/*.yml` and `.yaml`
+- Dockerfiles
+- Compose files
+- one high-priority `README.md`
+- `.env.example` and `.env.sample`
+
+Default limits are 10 files, 96 KB per file, and 480 KB total. Per-kind caps prevent a large monorepo from spending the whole budget on one file type. Invalid paths, binary-looking content, oversized files, timeouts, and unavailable files are skipped with an explicit warning instead of failing the full repository analysis.
+
+The YAML parser uses unique-key validation and a bounded alias expansion when converting documents. Dockerfiles are inspected as directives and continuation lines; no build is executed.
+
+Raw file content is never included in `RepositoryContentAnalysis`. For environment examples, only variable names and safe status messages are reported; values are never returned.
 
 ## URL Support
 
@@ -95,9 +117,10 @@ The analyzer processes up to 5000 relevant tree items. If the tree is truncated,
 
 - Public repositories only.
 - No local clone.
-- No source-code content analysis yet.
+- No general source-code or semantic application analysis.
 - No private repository support.
-- No semantic package.json parsing yet.
+- Content checks do not execute package scripts, workflows, Docker builds, or Compose services.
+- A passed check confirms visible configuration text, not successful runtime behavior.
 - Numeric scoring is handled by `packages/scoring` using analyzer output.
 - Checklist, learning path, and labs are handled by `packages/learning` using analyzer and scoring output.
 
