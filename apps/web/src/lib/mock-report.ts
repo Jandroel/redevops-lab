@@ -234,6 +234,93 @@ export const demoReport: DevOpsReport = {
       evidence: ["apps/api/src/modules/health/health.controller.ts"]
     }
   ],
+  concepts: [
+    {
+      id: "devops-feedback-loop",
+      term: "Ciclo DevOps",
+      category: "general",
+      shortDefinition: "Conecta codigo, validacion, despliegue, observacion y aprendizaje.",
+      beginnerExplanation:
+        "DevOps no es una herramienta unica. Es un ciclo para cambiar en pequeno, validar, observar y mejorar.",
+      whyItMatters: "Ayuda a convertir cambios manuales en practicas repetibles.",
+      example: "PR -> CI -> deploy -> health check -> mejora siguiente",
+      relatedTerms: ["ci-pipeline", "health-check"]
+    },
+    {
+      id: "dockerfile",
+      term: "Dockerfile",
+      category: "containerization",
+      shortDefinition: "Receta para construir una imagen de contenedor.",
+      beginnerExplanation:
+        "Describe que sistema base usar, que dependencias instalar y que comando ejecuta la app.",
+      whyItMatters: "Reduce el clasico problema de que algo solo funciona en una maquina.",
+      example: "docker build -t redevops-lab .",
+      relatedTerms: ["container-image", "docker-compose"]
+    },
+    {
+      id: "ci-pipeline",
+      term: "CI pipeline",
+      category: "ci_cd",
+      shortDefinition: "Automatizacion que valida cambios antes de integrarlos.",
+      beginnerExplanation:
+        "Un pipeline puede instalar dependencias, correr tests, typecheck y build en cada pull request.",
+      whyItMatters: "Atrapa errores temprano y crea reglas compartidas para aceptar cambios.",
+      example: ".github/workflows/ci.yml ejecuta pnpm test",
+      relatedTerms: ["quality-gate"]
+    },
+    {
+      id: "health-check",
+      term: "Health check",
+      category: "observability",
+      shortDefinition: "Endpoint o comando que indica si un servicio esta vivo.",
+      beginnerExplanation:
+        "Es la senal minima para saber si la app arranco y puede responder.",
+      whyItMatters: "Permite verificar despliegues y monitoreo inicial.",
+      example: "GET /api/health",
+      relatedTerms: ["structured-logging", "metrics"]
+    }
+  ],
+  learningModules: [
+    {
+      id: "module-devops-map",
+      title: "Mapa mental DevOps",
+      category: "general",
+      summary: "Aprende a leer el reporte como evidencia, practica y mejora.",
+      beginnerGoal: "Distinguir score, checklist, ruta, labs y evidencia.",
+      whyNow: "Empieza aqui para convertir hallazgos en acciones pequenas.",
+      concepts: ["devops-feedback-loop"],
+      labs: [],
+      checklistItems: [],
+      estimatedTime: "15-25 min",
+      outcome: "Puedes explicar que detecto ReDevOps Lab y que haras despues."
+    },
+    {
+      id: "module-containers",
+      title: "Contenedores reproducibles",
+      category: "containerization",
+      summary: "Pasa de instrucciones manuales a una forma repetible de construir.",
+      beginnerGoal: "Entender la diferencia entre Dockerfile, imagen y Compose.",
+      whyNow: "Containerization tiene practicas por reforzar en este repositorio.",
+      concepts: ["dockerfile"],
+      labs: ["lab-dockerfile"],
+      checklistItems: ["containerization.dockerfile"],
+      estimatedTime: "45-75 min",
+      outcome: "Puedes construir o describir la imagen minima del proyecto."
+    },
+    {
+      id: "module-observability",
+      title: "Visibilidad operativa",
+      category: "observability",
+      summary: "Aprende que senales muestran si la app esta viva o fallando.",
+      beginnerGoal: "Separar health checks, logs y metricas.",
+      whyNow: "Observability tiene una base de health, pero falta reforzar logging o metricas.",
+      concepts: ["health-check"],
+      labs: ["lab-observability"],
+      checklistItems: ["observability.logging_metrics"],
+      estimatedTime: "35-70 min",
+      outcome: "Puedes definir que observar primero despues de un despliegue."
+    }
+  ],
   learningPath: [
     {
       id: "path-runtime-configuration",

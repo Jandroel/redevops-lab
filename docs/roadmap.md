@@ -61,21 +61,30 @@
 - Empty states for missing report/session data
 - Deployment notes for Vercel frontend and Railway backend
 
-## Phase 8 - Persistence and Report Lifecycle
+## Phase 8 - Beginner Learning Experience
+
+- Beginner learning journey generated from report evidence
+- Practical glossary tied to the repository's current gaps and labs
+- Richer hands-on labs with prerequisites, commands, expected outcomes, common mistakes, completion criteria, and verification checklist
+- Local module progress in the report dashboard
+- Markdown export updated with learning modules and glossary terms
+- Beginner docs under `docs/learn/`
+
+## Phase 9 - Persistence and Report Lifecycle
 
 - Persist generated reports beyond session storage
 - Introduce stable report IDs backed by storage
 - Improve exported Markdown around persisted reports
 - Add report lifecycle documentation
 
-## Phase 9 - Persistence
+## Phase 10 - Persistence
 
 - PostgreSQL
 - Prisma
 - Saved public reports by ID
 - Report history without login initially
 
-## Phase 10 - Portfolio Quality
+## Phase 11 - Portfolio Quality
 
 - Tests
 - Demo GIF and screenshots

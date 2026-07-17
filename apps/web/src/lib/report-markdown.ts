@@ -1,6 +1,8 @@
 import type {
   AiReportEnhancement,
+  DevOpsConcept,
   DevOpsLab,
+  DevOpsLearningModule,
   DevOpsReport,
   LearningPathStep,
   ProductionChecklistItem,
@@ -18,6 +20,8 @@ export function createReportMarkdown(report: DevOpsReport): string {
   const productionChecklist = report.productionChecklist ?? [];
   const learningPathSteps = report.learningPath ?? [];
   const handsOnLabs = report.labs ?? [];
+  const learningModules = report.learningModules ?? [];
+  const concepts = report.concepts ?? [];
   const importantFiles = report.analysis?.importantFiles.length
     ? report.analysis.importantFiles.map((file) => `- ${file}`).join("\n")
     : `- ${label(language, "No disponible en este reporte.", "Not available in this report.")}`;
@@ -43,6 +47,8 @@ export function createReportMarkdown(report: DevOpsReport): string {
     .map((finding) => `- **${finding.type}**: ${finding.title} - ${finding.description}`)
     .join("\n");
   const checklist = formatProductionChecklist(productionChecklist, language);
+  const modules = formatLearningModules(learningModules, language);
+  const glossary = formatConcepts(concepts, language);
   const learningPath = formatLearningPath(learningPathSteps, language);
   const labs = formatLabs(handsOnLabs, language);
   const aiMentor = formatAiMentor(report.ai, language);
@@ -109,6 +115,14 @@ ${aiMentor}
 
 ${checklist}
 
+## ${label(language, "Ruta guiada para principiantes", "Beginner Learning Journey")}
+
+${modules}
+
+## ${label(language, "Glosario practico", "Practical Glossary")}
+
+${glossary}
+
 ## Learning Path
 
 ${learningPath}
@@ -155,6 +169,58 @@ function formatProductionChecklist(items: ProductionChecklistItem[], language: R
     .join("\n");
 }
 
+function formatLearningModules(modules: DevOpsLearningModule[], language: ReportLanguage): string {
+  if (!modules.length) {
+    return `- ${label(language, "No hay modulos guiados disponibles.", "No guided modules available.")}`;
+  }
+
+  return modules
+    .map(
+      (module, index) => `### ${index + 1}. ${module.title}
+
+${module.summary}
+
+${label(language, "Objetivo para principiantes", "Beginner goal")}: ${module.beginnerGoal}
+
+${label(language, "Por que ahora", "Why now")}: ${module.whyNow}
+
+${label(language, "Tiempo estimado", "Estimated time")}: ${module.estimatedTime}
+
+${label(language, "Resultado esperado", "Expected outcome")}: ${module.outcome}
+
+${label(language, "Conceptos", "Concepts")}: ${module.concepts.join(", ") || "n/a"}
+
+${label(language, "Labs relacionados", "Related labs")}: ${module.labs.join(", ") || "n/a"}
+
+${label(language, "Checklist relacionada", "Related checklist")}: ${module.checklistItems.join(", ") || "n/a"}`
+    )
+    .join("\n\n");
+}
+
+function formatConcepts(concepts: DevOpsConcept[], language: ReportLanguage): string {
+  if (!concepts.length) {
+    return `- ${label(language, "No hay conceptos disponibles.", "No concepts available.")}`;
+  }
+
+  return concepts
+    .map(
+      (concept) => `### ${concept.term}
+
+${label(language, "Categoria", "Category")}: ${concept.category}
+
+${concept.shortDefinition}
+
+${label(language, "En palabras simples", "In plain words")}: ${concept.beginnerExplanation}
+
+${label(language, "Por que importa", "Why it matters")}: ${concept.whyItMatters}
+
+${label(language, "Ejemplo", "Example")}: ${concept.example}
+
+${label(language, "Relacionados", "Related")}: ${concept.relatedTerms.join(", ") || "n/a"}`
+    )
+    .join("\n\n");
+}
+
 function formatLearningPath(steps: LearningPathStep[], language: ReportLanguage): string {
   if (!steps.length) {
     return `1. ${label(language, "No hay ruta disponible.", "No learning path available.")}`;
@@ -190,11 +256,30 @@ ${label(language, "Objetivo", "Objective")}: ${lab.objective}
 
 ${label(language, "Por que importa", "Why it matters")}: ${lab.whyItMatters}
 
+${label(language, "Conceptos", "Concepts")}: ${(lab.conceptIds ?? []).join(", ") || "n/a"}
+
+${label(language, "Antes de empezar", "Before you start")}:
+${formatBulletList(lab.prerequisites)}
+
 ${label(language, "Archivos sugeridos", "Suggested files")}:
-${(lab.suggestedFiles ?? []).map((file) => `- ${file}`).join("\n")}
+${formatBulletList(lab.suggestedFiles)}
 
 ${label(language, "Pasos", "Steps")}:
-${(lab.steps ?? []).map((step, stepIndex) => `${stepIndex + 1}. ${step}`).join("\n")}
+${formatNumberedList(lab.steps)}
+
+${label(language, "Comandos sugeridos", "Suggested commands")}:
+${formatCodeList(lab.commands)}
+
+${label(language, "Resultado esperado", "Expected outcome")}: ${lab.expectedOutcome ?? "n/a"}
+
+${label(language, "Errores comunes", "Common mistakes")}:
+${formatBulletList(lab.commonMistakes)}
+
+${label(language, "Criterios de cierre", "Completion criteria")}:
+${formatBulletList(lab.completionCriteria)}
+
+${label(language, "Checklist de verificacion", "Verification checklist")}:
+${formatBulletList(lab.verificationChecklist)}
 
 ${label(language, "Validacion", "Validation")}: ${lab.validation}`
     )
@@ -255,6 +340,22 @@ ${formatList(ai.improvedNextSteps)}`;
 
 function formatEvidence(evidence: string[] = []): string {
   return evidence.length ? ` - evidence: ${evidence.join(", ")}` : "";
+}
+
+function formatBulletList(items: readonly string[] = []): string {
+  return items.length ? items.map((item) => `- ${item}`).join("\n") : "- n/a";
+}
+
+function formatNumberedList(items: readonly string[] = []): string {
+  return items.length ? items.map((item, index) => `${index + 1}. ${item}`).join("\n") : "1. n/a";
+}
+
+function formatCodeList(items: readonly string[] = []): string {
+  if (!items.length) {
+    return "- n/a";
+  }
+
+  return items.map((item) => `\`\`\`bash\n${item}\n\`\`\``).join("\n\n");
 }
 
 function formatList(items: string[]): string {

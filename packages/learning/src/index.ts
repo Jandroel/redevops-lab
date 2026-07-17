@@ -1,8 +1,12 @@
 export { generateProductionChecklist } from "./checklist-generator.js";
 export type { GenerateProductionChecklistInput } from "./checklist-generator.js";
+export { generateDevOpsConcepts } from "./concepts.js";
+export type { GenerateDevOpsConceptsInput } from "./concepts.js";
 export { generateHandsOnLabs } from "./lab-generator.js";
 export type { GenerateHandsOnLabsInput } from "./lab-generator.js";
 export { generateLearningPath } from "./learning-path.js";
 export type { GenerateLearningPathInput } from "./learning-path.js";
+export { generateLearningModules } from "./modules.js";
+export type { GenerateLearningModulesInput } from "./modules.js";
 export { generateRecommendedNextSteps } from "./recommendations.js";
 export type { GenerateRecommendedNextStepsInput } from "./recommendations.js";

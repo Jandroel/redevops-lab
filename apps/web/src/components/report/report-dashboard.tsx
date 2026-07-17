@@ -1,9 +1,11 @@
 import type { DevOpsCategoryScore, DevOpsReport } from "@redevops-lab/shared";
 import { AiMentorPanel } from "@/components/report/ai-mentor-panel";
 import { Badge } from "@/components/ui/badge";
+import { BeginnerJourney } from "@/components/report/beginner-journey";
 import { ButtonLink } from "@/components/ui/button";
 import { CategoryScoreBars } from "@/components/report/category-score-bars";
 import { ChecklistSection } from "@/components/report/checklist-section";
+import { ConceptGlossary } from "@/components/report/concept-glossary";
 import { ExportMarkdownButton } from "@/components/report/export-markdown-button";
 import { ImportantFiles } from "@/components/report/important-files";
 import { LabsSection } from "@/components/report/labs-section";
@@ -31,6 +33,8 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const productionChecklist = report.productionChecklist ?? [];
   const learningPath = report.learningPath ?? [];
   const labs = report.labs ?? [];
+  const concepts = report.concepts ?? [];
+  const learningModules = report.learningModules ?? [];
   const terminalLines = [
     `report.id = ${report.id}`,
     `repository = ${report.repository.fullName}`,
@@ -40,6 +44,8 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
     `level = ${report.input.level}`,
     `language = ${report.input.language}`,
     `checklist.items = ${productionChecklist.length}`,
+    `learning.modules = ${learningModules.length}`,
+    `concepts.generated = ${concepts.length}`,
     `labs.generated = ${labs.length}`,
     `ai.provider = ${report.ai?.provider ?? "mock"}`,
     `ai.enabled = ${report.ai?.enabled ?? false}`,
@@ -57,6 +63,8 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
   const quickLinks = [
     { label: "Overview", href: "#score", meta: `${scorePercentage}%` },
     { label: "Actions", href: "#actions", meta: `${nextBestActions.length}` },
+    { label: "Learn", href: "#learn", meta: `${learningModules.length}` },
+    { label: "Concepts", href: "#concepts", meta: `${concepts.length}` },
     { label: "Checklist", href: "#checklist", meta: `${productionChecklist.length}` },
     { label: "Path", href: "#path", meta: `${learningPath.length}` },
     { label: "Labs", href: "#labs", meta: `${labs.length}` },
@@ -167,6 +175,20 @@ export function ReportDashboard({ report, sourceLabel = "API report" }: ReportDa
             <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
               <ChecklistSection title="Detected strengths" items={strengths} tone="present" />
               <ChecklistSection title="Risks and missing practices" items={gaps} tone="missing" />
+            </div>
+
+            <div id="learn" className="mt-6 scroll-mt-24">
+              <BeginnerJourney
+                reportId={report.id}
+                modules={learningModules}
+                concepts={concepts}
+                labs={labs}
+                checklist={productionChecklist}
+              />
+            </div>
+
+            <div id="concepts" className="mt-6 scroll-mt-24">
+              <ConceptGlossary concepts={concepts} />
             </div>
 
             <div id="checklist" className="mt-6 scroll-mt-24">

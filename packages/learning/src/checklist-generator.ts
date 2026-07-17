@@ -9,7 +9,7 @@ import type {
   RepositoryAnalysis,
   DevOpsScoreSummary
 } from "@redevops-lab/shared";
-import { localized, noConfigurationFile, noSignal, unique } from "./localization.js";
+import { noConfigurationFile, noSignal, unique } from "./localization.js";
 
 export interface GenerateProductionChecklistInput {
   analysis: RepositoryAnalysis;

@@ -1,7 +1,9 @@
 import { parseGitHubUrl } from "@redevops-lab/analyzer";
 import {
+  generateDevOpsConcepts,
   generateHandsOnLabs,
   generateLearningPath,
+  generateLearningModules,
   generateProductionChecklist,
   generateRecommendedNextSteps
 } from "@redevops-lab/learning";
@@ -220,6 +222,8 @@ export function createMockDevOpsReport(input: RepositoryInput): DevOpsReport {
     productionChecklist: learning.productionChecklist,
     learningPath: learning.learningPath,
     labs: learning.labs,
+    concepts: learning.concepts,
+    learningModules: learning.learningModules,
     analysis,
     generatedAt
   };
@@ -246,6 +250,8 @@ export function createAnalyzedDevOpsReport(
     productionChecklist: learning.productionChecklist,
     learningPath: learning.learningPath,
     labs: learning.labs,
+    concepts: learning.concepts,
+    learningModules: learning.learningModules,
     analysis,
     generatedAt: analysis.generatedAt
   };
@@ -263,6 +269,8 @@ function createLearningSections(
   productionChecklist: ProductionChecklistItem[];
   learningPath: LearningPathStep[];
   labs: DevOpsReport["labs"];
+  concepts: NonNullable<DevOpsReport["concepts"]>;
+  learningModules: NonNullable<DevOpsReport["learningModules"]>;
 } {
   const score = calculateDevOpsScore(analysis);
   const productionChecklist = generateProductionChecklist({
@@ -286,6 +294,22 @@ function createLearningSections(
     level: input.level,
     language: input.language
   });
+  const concepts = generateDevOpsConcepts({
+    analysis,
+    score,
+    checklist: productionChecklist,
+    learningPath,
+    labs,
+    language: input.language
+  });
+  const learningModules = generateLearningModules({
+    checklist: productionChecklist,
+    learningPath,
+    labs,
+    concepts,
+    level: input.level,
+    language: input.language
+  });
   const nextBestActions = generateRecommendedNextSteps({
     score,
     checklist: productionChecklist,
@@ -301,6 +325,8 @@ function createLearningSections(
     },
     productionChecklist,
     learningPath,
-    labs
+    labs,
+    concepts,
+    learningModules
   };
 }

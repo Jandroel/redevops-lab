@@ -33,14 +33,26 @@ interface LabContext {
   stack: Set<string>;
 }
 
+type BeginnerGuidance = Pick<
+  DevOpsLab,
+  | "conceptIds"
+  | "prerequisites"
+  | "commands"
+  | "expectedOutcome"
+  | "commonMistakes"
+  | "completionCriteria"
+  | "verificationChecklist"
+>;
+
 export function generateHandsOnLabs(input: GenerateHandsOnLabsInput): DevOpsLab[] {
   const context = createLabContext(input);
   const candidates = createLabCandidates(context);
   const selected = candidates.filter((candidate) => candidate.when(context));
   const pathOrdered = candidates.filter((candidate) => context.pathLabIds.has(candidate.id));
   const labs = uniqueLabs([...selected, ...pathOrdered, ...candidates]).slice(0, 8);
+  const selectedLabs = labs.length >= 4 ? labs : uniqueLabs([...labs, ...candidates]).slice(0, 4);
 
-  return labs.length >= 4 ? labs : uniqueLabs([...labs, ...candidates]).slice(0, 4);
+  return selectedLabs.map((lab) => withBeginnerGuidance(lab, context));
 }
 
 function createLabCandidates(context: LabContext): LabCandidate[] {
@@ -442,6 +454,279 @@ function createLabCandidates(context: LabContext): LabCandidate[] {
       when: (ctx) => ctx.score.percentage >= 70 || ctx.level === "advanced"
     }
   ];
+}
+
+function withBeginnerGuidance(lab: DevOpsLab, context: LabContext): DevOpsLab {
+  const guidance = createBeginnerGuidance(lab, context);
+
+  return {
+    ...lab,
+    ...guidance,
+    conceptIds: unique([...(lab.conceptIds ?? []), ...(guidance.conceptIds ?? [])]),
+    prerequisites: unique([...(lab.prerequisites ?? []), ...(guidance.prerequisites ?? [])]),
+    commands: unique([...(lab.commands ?? []), ...(guidance.commands ?? [])]),
+    commonMistakes: unique([...(lab.commonMistakes ?? []), ...(guidance.commonMistakes ?? [])]),
+    completionCriteria: unique([...(lab.completionCriteria ?? []), ...(guidance.completionCriteria ?? [])]),
+    verificationChecklist: unique([
+      ...(lab.verificationChecklist ?? []),
+      ...(guidance.verificationChecklist ?? [])
+    ])
+  };
+}
+
+function createBeginnerGuidance(lab: DevOpsLab, context: LabContext): BeginnerGuidance {
+  const { language } = context;
+  const category = lab.category ?? "documentation";
+  const concepts = conceptIdsForLab(lab);
+
+  return {
+    conceptIds: concepts,
+    prerequisites: prerequisitesForLab(lab, context),
+    commands: commandsForLab(lab, context),
+    expectedOutcome: expectedOutcomeForLab(lab, language),
+    commonMistakes: commonMistakesForCategory(category, language),
+    completionCriteria: completionCriteriaForLab(lab, language),
+    verificationChecklist: verificationChecklistForLab(lab, language)
+  };
+}
+
+function conceptIdsForLab(lab: DevOpsLab): string[] {
+  const byLabId: Record<string, string[]> = {
+    "lab-env-example": ["environment-variable", "secret-hygiene"],
+    "lab-dockerfile": ["dockerfile", "container-image"],
+    "lab-docker-compose": ["docker-compose", "environment-variable"],
+    "lab-ci-workflow": ["ci-pipeline", "quality-gate"],
+    "lab-security-scanning": ["dependency-scanning", "supply-chain-security", "secret-hygiene"],
+    "lab-observability": ["health-check", "structured-logging"],
+    "lab-deployment-docs": ["runbook", "health-check"],
+    "lab-infrastructure-as-code": ["iac"],
+    "lab-production-docker": ["dockerfile", "container-image", "supply-chain-security"],
+    "lab-observability-dashboard": ["metrics", "structured-logging", "health-check"],
+    "lab-rollback-strategy": ["rollback", "runbook", "health-check"],
+    "lab-deployment-strategy": ["runbook", "rollback", "quality-gate"],
+    "lab-infrastructure-validation": ["iac", "quality-gate"]
+  };
+
+  const byCategory: Record<NonNullable<DevOpsLab["category"]>, string[]> = {
+    configuration: ["environment-variable", "secret-hygiene"],
+    containerization: ["dockerfile", "container-image"],
+    ci_cd: ["ci-pipeline", "quality-gate"],
+    security: ["dependency-scanning", "supply-chain-security"],
+    observability: ["health-check", "structured-logging"],
+    documentation: ["runbook", "repository-signal"],
+    infrastructure: ["iac"]
+  };
+
+  return byLabId[lab.id] ?? (lab.category ? byCategory[lab.category] : ["repository-signal"]);
+}
+
+function prerequisitesForLab(lab: DevOpsLab, context: LabContext): string[] {
+  const { language } = context;
+  const common = [
+    localized(language, "Repositorio clonado y cambios en una rama de trabajo.", "Repository cloned and changes made on a working branch."),
+    localized(language, "README revisado para entender como se ejecuta el proyecto.", "README reviewed to understand how the project runs.")
+  ];
+  const byLabId: Record<string, string[]> = {
+    "lab-env-example": [
+      localized(language, "Lista inicial de variables que la app usa en runtime.", "Initial list of variables the app uses at runtime.")
+    ],
+    "lab-dockerfile": [
+      localized(language, "Docker instalado localmente o disponible en CI.", "Docker installed locally or available in CI."),
+      localized(language, "Comando real para instalar, compilar o iniciar la app.", "Real command to install, build, or start the app.")
+    ],
+    "lab-docker-compose": [
+      localized(language, "Docker Compose disponible.", "Docker Compose available."),
+      localized(language, ".env.example revisado para no inyectar secretos reales.", ".env.example reviewed to avoid injecting real secrets.")
+    ],
+    "lab-ci-workflow": [
+      localized(language, "Comandos reales de validacion identificados.", "Real validation commands identified."),
+      localized(language, "Permisos para agregar archivos en .github/workflows.", "Permission to add files under .github/workflows.")
+    ],
+    "lab-security-scanning": [
+      localized(language, "Gestor de paquetes principal identificado.", "Main package manager identified."),
+      localized(language, "Criterio inicial para decidir que hallazgos bloquean el merge.", "Initial criterion for deciding which findings block merge.")
+    ],
+    "lab-observability": [
+      localized(language, "La aplicacion puede ejecutarse localmente.", "The application can run locally."),
+      localized(language, "Ruta o modulo donde se exponen endpoints del servicio.", "Route or module where service endpoints are exposed.")
+    ],
+    "lab-infrastructure-as-code": [
+      localized(language, "Proveedor o plataforma objetivo definido aunque sea de forma preliminar.", "Target provider or platform defined, even preliminarily.")
+    ],
+    "lab-production-docker": [
+      localized(language, "Dockerfile base o comando de build ya entendido.", "Base Dockerfile or build command already understood.")
+    ],
+    "lab-observability-dashboard": [
+      localized(language, "Senales operativas disponibles o documentadas como pendientes.", "Operational signals available or documented as pending.")
+    ],
+    "lab-rollback-strategy": [
+      localized(language, "Existe una forma de identificar versiones o commits desplegados.", "There is a way to identify deployed versions or commits.")
+    ],
+    "lab-deployment-strategy": [
+      localized(language, "Ambiente objetivo y responsables de despliegue definidos.", "Target environment and deployment owners defined.")
+    ],
+    "lab-infrastructure-validation": [
+      localized(language, "Archivos de infraestructura o plan de introducirlos.", "Infrastructure files or a plan to introduce them.")
+    ]
+  };
+
+  return unique([...common, ...(byLabId[lab.id] ?? [])]).slice(0, 4);
+}
+
+function commandsForLab(lab: DevOpsLab, context: LabContext): string[] {
+  const packageManager = detectPackageManager(context);
+  const byLabId: Record<string, string[]> = {
+    "lab-env-example": ["cp .env.example .env.local", "git diff -- .env.example README.md"],
+    "lab-dockerfile": ["docker build -t app-dev .", "docker run --rm -p 3000:3000 app-dev"],
+    "lab-docker-compose": ["docker compose config", "docker compose up --build"],
+    "lab-ci-workflow": [
+      `${packageManager} install`,
+      `${packageManager} test`,
+      "git diff -- .github/workflows/ci.yml"
+    ],
+    "lab-security-scanning": [
+      `${packageManager} audit`,
+      "npx --yes gitleaks detect --source . --no-git"
+    ],
+    "lab-observability": [
+      "curl http://localhost:3000/health",
+      "curl http://localhost:3001/api/health"
+    ],
+    "lab-deployment-docs": ["git diff -- docs/deployment.md README.md"],
+    "lab-infrastructure-as-code": ["terraform fmt -check", "terraform validate"],
+    "lab-production-docker": [
+      "docker build --target production -t app-production .",
+      "docker run --rm app-production"
+    ],
+    "lab-observability-dashboard": ["git diff -- docs/observability.md"],
+    "lab-rollback-strategy": ["git tag --list", "git revert <commit-sha> --no-commit"],
+    "lab-deployment-strategy": ["git diff -- docs/deployment.md docs/release-strategy.md"],
+    "lab-infrastructure-validation": ["terraform fmt -check", "terraform validate", "terraform plan"]
+  };
+
+  return byLabId[lab.id] ?? ["git status --short"];
+}
+
+function expectedOutcomeForLab(lab: DevOpsLab, language: ReportLanguage): string {
+  const byLabId: Record<string, string> = {
+    "lab-env-example": localized(
+      language,
+      "El repositorio muestra que variables existen, cuales son falsas y donde configurar valores reales.",
+      "The repository shows which variables exist, which values are fake, and where to configure real values."
+    ),
+    "lab-dockerfile": localized(
+      language,
+      "Existe una imagen reproducible que puede construirse sin depender de instrucciones manuales.",
+      "A reproducible image exists and can be built without relying on manual instructions."
+    ),
+    "lab-docker-compose": localized(
+      language,
+      "El entorno local se puede levantar con un comando documentado.",
+      "The local environment can be started with one documented command."
+    ),
+    "lab-ci-workflow": localized(
+      language,
+      "Cada pull request tiene una validacion automatica visible.",
+      "Each pull request has a visible automated validation."
+    ),
+    "lab-security-scanning": localized(
+      language,
+      "El equipo recibe senales tempranas sobre dependencias, secretos o codigo riesgoso.",
+      "The team receives early signals about dependencies, secrets, or risky code."
+    ),
+    "lab-observability": localized(
+      language,
+      "Existe una primera respuesta verificable para saber si el servicio esta vivo.",
+      "A first verifiable response exists to know whether the service is alive."
+    ),
+    "lab-deployment-docs": localized(
+      language,
+      "Una persona puede seguir la guia de despliegue sin conocimiento tribal.",
+      "A person can follow the deployment guide without tribal knowledge."
+    )
+  };
+
+  return (
+    byLabId[lab.id] ??
+    localized(
+      language,
+      "La practica queda documentada, verificable y conectada con evidencia del repositorio.",
+      "The practice becomes documented, verifiable, and connected to repository evidence."
+    )
+  );
+}
+
+function commonMistakesForCategory(
+  category: NonNullable<DevOpsLab["category"]> | "documentation",
+  language: ReportLanguage
+): string[] {
+  const common = [
+    localized(language, "Copiar ejemplos sin adaptarlos al stack real.", "Copying examples without adapting them to the real stack."),
+    localized(language, "No documentar que queda pendiente o asumido.", "Not documenting what remains pending or assumed.")
+  ];
+  const byCategory: Record<NonNullable<DevOpsLab["category"]>, string[]> = {
+    configuration: [
+      localized(language, "Subir valores reales en .env.example.", "Committing real values in .env.example.")
+    ],
+    containerization: [
+      localized(language, "Incluir node_modules, dist o secretos dentro de la imagen.", "Including node_modules, dist, or secrets inside the image.")
+    ],
+    ci_cd: [
+      localized(language, "Crear un workflow que pasa aunque no ejecute validaciones reales.", "Creating a workflow that passes without running real validations.")
+    ],
+    security: [
+      localized(language, "Activar escaneos sin definir como revisar o priorizar hallazgos.", "Enabling scans without defining how findings are reviewed or prioritized.")
+    ],
+    observability: [
+      localized(language, "Confundir health check con monitoreo completo.", "Confusing a health check with complete monitoring.")
+    ],
+    documentation: [
+      localized(language, "Escribir pasos que solo funcionan en la maquina del autor.", "Writing steps that only work on the author's machine.")
+    ],
+    infrastructure: [
+      localized(language, "Aplicar infraestructura sin plan, revision o entorno seguro.", "Applying infrastructure without a plan, review, or safe environment.")
+    ]
+  };
+
+  return unique([...common, ...(byCategory[category] ?? [])]).slice(0, 4);
+}
+
+function completionCriteriaForLab(lab: DevOpsLab, language: ReportLanguage): string[] {
+  return [
+    localized(language, "El cambio deja evidencia en archivos versionados.", "The change leaves evidence in versioned files."),
+    localized(language, "El README o docs explican como repetirlo.", "The README or docs explain how to repeat it."),
+    localized(language, "La validacion del lab puede ejecutarse o revisarse manualmente.", "The lab validation can be run or reviewed manually."),
+    localized(
+      language,
+      `La practica queda vinculada al hallazgo: ${lab.title}.`,
+      `The practice is linked to the finding: ${lab.title}.`
+    )
+  ];
+}
+
+function verificationChecklistForLab(lab: DevOpsLab, language: ReportLanguage): string[] {
+  return [
+    localized(language, "Revise el diff y no incluye secretos.", "Review the diff and ensure it includes no secrets."),
+    localized(language, "Ejecute al menos el comando de validacion principal.", "Run at least the main validation command."),
+    localized(language, "Anote cualquier restriccion local o decision pendiente.", "Write down any local restriction or pending decision."),
+    localized(language, `Confirme: ${lab.validation}`, `Confirm: ${lab.validation}`)
+  ];
+}
+
+function detectPackageManager(context: LabContext): string {
+  if (context.existingFiles.has("pnpm-lock.yaml")) {
+    return "pnpm";
+  }
+
+  if (context.existingFiles.has("yarn.lock")) {
+    return "yarn";
+  }
+
+  if (context.existingFiles.has("package-lock.json")) {
+    return "npm";
+  }
+
+  return "npm";
 }
 
 function createLabContext({

@@ -165,8 +165,15 @@ export interface DevOpsLab {
   difficulty: ExperienceLevel;
   objective: string;
   whyItMatters: string;
+  conceptIds?: string[];
+  prerequisites?: string[];
   suggestedFiles: string[];
   steps: string[];
+  commands?: string[];
+  expectedOutcome?: string;
+  commonMistakes?: string[];
+  completionCriteria?: string[];
+  verificationChecklist?: string[];
   validation: string;
   estimatedTime?: string;
   category?: ProductionChecklistCategory;
@@ -182,6 +189,31 @@ export interface LearningPathStep {
   labs: string[];
   status?: "completed" | "recommended" | "optional";
   difficulty?: ExperienceLevel;
+}
+
+export interface DevOpsConcept {
+  id: string;
+  term: string;
+  category: ProductionChecklistCategory | "general";
+  shortDefinition: string;
+  beginnerExplanation: string;
+  whyItMatters: string;
+  example: string;
+  relatedTerms: string[];
+}
+
+export interface DevOpsLearningModule {
+  id: string;
+  title: string;
+  category: ProductionChecklistCategory | "general";
+  summary: string;
+  beginnerGoal: string;
+  whyNow: string;
+  concepts: string[];
+  labs: string[];
+  checklistItems: string[];
+  estimatedTime: string;
+  outcome: string;
 }
 
 export interface DevOpsScoreSummary {
@@ -222,6 +254,8 @@ export interface DevOpsReport {
   productionChecklist: ProductionChecklistItem[];
   learningPath: LearningPathStep[];
   labs: DevOpsLab[];
+  concepts?: DevOpsConcept[];
+  learningModules?: DevOpsLearningModule[];
   ai?: AiReportEnhancement;
   analysis?: RepositoryAnalysis;
   generatedAt: string;

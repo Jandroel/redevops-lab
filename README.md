@@ -4,7 +4,7 @@
 
 ReDevOps Lab analyzes a public GitHub repository and turns it into a personalized DevOps learning lab with a rule-based maturity score, production-readiness checklist, detected stack, missing practices, and hands-on labs.
 
-The project is in active development. The current implementation covers the foundation through Phase 7: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, UI/UX polish, examples, documentation, CI, and deploy-ready structure.
+The project is in active development. The current implementation covers the foundation through Phase 8: monorepo, web experience, NestJS API, OpenAPI docs, GitHub repository analyzer, rule-based scoring engine, rule-based learning engine, optional AI mentor layer, UI/UX polish, examples, documentation, CI, deploy-ready structure, and a beginner-focused learning experience.
 
 ## Features
 
@@ -14,11 +14,14 @@ The project is in active development. The current implementation covers the foun
 - Basic stack detection from repository files
 - DevOps signal detection for Docker, CI/CD, security, docs, observability, and infrastructure
 - Personalized learning path generated from score gaps and repository signals
-- Hands-on lab cards with objectives, steps, validation, difficulty, estimated time, and suggested files
+- Beginner learning modules that connect concepts, labs, checklist evidence, and outcomes
+- Practical concept glossary generated from the report context
+- Hands-on lab cards with objectives, prerequisites, commands, steps, validation, mistakes, completion criteria, difficulty, estimated time, and suggested files
+- Local interactive progress for learning modules in the report dashboard
 - Optional DevOps AI Mentor layer with mock and OpenAI-compatible providers
 - Product-grade report dashboard with score, evidence, checklist, learning path, labs, mentor notes, and Markdown export
 - Analyzer UX with validation, example repositories, loading progress, and actionable error states
-- Markdown export with checklist, learning path, labs, and scoring evidence
+- Markdown export with checklist, beginner modules, glossary, learning path, labs, and scoring evidence
 - Basic Spanish and English report content for educational sections
 - Next.js frontend with dark cloud-native UI
 - NestJS API with health, analyze, reports, and Markdown export endpoints
@@ -46,8 +49,8 @@ redevops-lab/
     shared/     # Shared TypeScript contracts
     analyzer/   # GitHub repository analyzer
     scoring/    # Rule-based DevOps scoring engine
-    learning/   # Rule-based checklist, learning path, labs, and next steps
-  docs/         # Architecture, API, analyzer, scoring, learning, UI, roadmap, deployment
+    learning/   # Rule-based checklist, concepts, modules, learning path, labs, and next steps
+  docs/         # Architecture, API, analyzer, scoring, learning, UI, roadmap, deployment, beginner guides
   examples/     # Example reports
 ```
 
@@ -89,7 +92,7 @@ GET  /api/reports/:id/export
 GET  /api/docs
 ```
 
-`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, learning path, hands-on labs, and recommended next steps.
+`POST /api/analyze` validates a GitHub repository URL, calls the GitHub REST API for public repository metadata and recursive file tree data, then returns a `DevOpsReport` with detected stack, DevOps signals, important files, findings, rule-based DevOps Maturity Score, production-ready checklist, beginner concepts, guided learning modules, learning path, hands-on labs, and recommended next steps.
 
 ## Environment
 
@@ -121,7 +124,7 @@ AI_TIMEOUT_MS=20000
 
 ## Project Status
 
-ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, learning path, or labs. There is no database, login, private repository support, or real deployment automation yet.
+ReDevOps Lab is under active development and ready for public GitHub iteration. Core analysis, scoring, checklist, concepts, learning modules, learning path, and labs are deterministic and evidence-based. The AI mentor layer is optional and may explain or prioritize the report, but it does not change analyzer facts, score, findings, checklist, concepts, learning modules, learning path, or labs. There is no database, login, private repository support, or real deployment automation yet.
 
 ## Roadmap
 
@@ -132,9 +135,10 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 5. Rule-based learning path, hands-on labs, production checklist, and bilingual educational output
 6. Optional AI mentor explanations grounded in analyzer output
 7. UI/UX polish, report dashboard organization, examples, loading/error/empty states, and deploy readiness notes
-8. Persisted reports and export polish
-9. PostgreSQL persistence
-10. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
+8. Beginner learning journey, glossary, richer labs, and educational docs
+9. Persisted reports and export polish
+10. PostgreSQL persistence
+11. Portfolio-grade tests, screenshots, CONTRIBUTING guide, and production deployment assets
 
 ## Deployment Plan
 
@@ -149,7 +153,8 @@ ReDevOps Lab is under active development and ready for public GitHub iteration. 
 - AI mentor is optional, disabled by default, and does not replace deterministic analysis
 - No private repository analysis yet
 - Score is deterministic and rule-based, but still limited to repository structure and file-name evidence
-- Learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
+- Concept, module, learning path, lab, checklist, and next-step generation are deterministic and rule-based; they do not inspect deep file contents yet
+- Learning progress is stored locally in the browser and is not synced because there is no database yet
 
 ## Author
 

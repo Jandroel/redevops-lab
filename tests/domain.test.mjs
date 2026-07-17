@@ -7,8 +7,10 @@ import {
 } from "../packages/analyzer/dist/index.js";
 import { calculateDevOpsScore } from "../packages/scoring/dist/index.js";
 import {
+  generateDevOpsConcepts,
   generateHandsOnLabs,
   generateLearningPath,
+  generateLearningModules,
   generateProductionChecklist
 } from "../packages/learning/dist/index.js";
 
@@ -95,6 +97,22 @@ test("scoring and learning engines generate useful deterministic output", () => 
     level: "beginner",
     language: "en"
   });
+  const concepts = generateDevOpsConcepts({
+    analysis,
+    score,
+    checklist,
+    learningPath,
+    labs,
+    language: "en"
+  });
+  const learningModules = generateLearningModules({
+    checklist,
+    learningPath,
+    labs,
+    concepts,
+    level: "beginner",
+    language: "en"
+  });
 
   assert.equal(score.maxScore, 100);
   assert.equal(score.categories.length, 7);
@@ -103,6 +121,11 @@ test("scoring and learning engines generate useful deterministic output", () => 
   assert.ok(learningPath.length >= 5);
   assert.ok(labs.length >= 4);
   assert.ok(labs.every((lab) => lab.objective && lab.validation));
+  assert.ok(labs.every((lab) => lab.prerequisites?.length && lab.completionCriteria?.length));
+  assert.ok(concepts.length >= 4);
+  assert.ok(concepts.some((concept) => concept.id === "devops-feedback-loop"));
+  assert.ok(learningModules.length >= 3);
+  assert.ok(learningModules.every((module) => module.beginnerGoal && module.outcome));
 });
 
 function createAnalysisFixture() {
